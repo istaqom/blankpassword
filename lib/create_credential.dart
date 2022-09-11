@@ -52,6 +52,7 @@ class CreateCredentialFormWidgetState
   var name = TextEditingController();
   var password = TextEditingController();
   var sites = [TextEditingController()];
+  var notes = TextEditingController();
   bool showPassword = false;
 
   @override
@@ -140,6 +141,14 @@ class CreateCredentialFormWidgetState
             });
           },
         ),
+        TextField(
+          controller: notes,
+          decoration: const InputDecoration(
+            label: Text("Notes"),
+          ),
+          minLines: 4,
+          maxLines: null,
+        )
       ],
     );
   }
