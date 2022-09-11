@@ -37,16 +37,20 @@ class _YourPasswordHomePageWidgetState
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: <Widget>[
-              Row(
-                children: [
-                  Icon(
-                    Icons.create_new_folder,
-                    size: 100,
-                    color: Theme.of(context).primaryColor,
-                  ),
-                ],
+              OutlinedButton(
+                onPressed: () {},
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.create_new_folder,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ],
+                ),
               ),
+              const Padding(padding: EdgeInsets.all(2)),
               const Divider(height: 2, thickness: 2),
+              const Padding(padding: EdgeInsets.all(2)),
               OutlinedButton(
                 onPressed: () {
                   Navigator.push(
@@ -59,12 +63,12 @@ class _YourPasswordHomePageWidgetState
                 child: Row(children: [
                   Icon(
                     Icons.folder,
-                    size: 100,
                     color: Theme.of(context).primaryColor,
                   ),
                   const Text("Sosmed"),
                 ]),
-              )
+              ),
+              const Padding(padding: EdgeInsets.all(2)),
             ],
           ),
         ),
@@ -105,17 +109,20 @@ class _YourPasswordFolderWidgetState extends State<YourPasswordFolderWidget> {
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: <Widget>[
-              Row(
-                children: const [
-                  Icon(
-                    Icons.folder,
-                    size: 100,
-                  ),
-                  Text("Sosmed"),
-                ],
+              OutlinedButton(
+                onPressed: () {},
+                child: Row(
+                  children: const [
+                    Icon(
+                      Icons.folder,
+                    ),
+                    Text("Sosmed"),
+                  ],
+                ),
               ),
+              const Padding(padding: EdgeInsets.all(2)),
               const Divider(height: 2, thickness: 2),
-              const SizedBox(height: 20),
+              const Padding(padding: EdgeInsets.all(2)),
               OutlinedButton(
                 onPressed: () {
                   Navigator.push(
@@ -129,7 +136,6 @@ class _YourPasswordFolderWidgetState extends State<YourPasswordFolderWidget> {
                   children: [
                     const Icon(
                       Icons.facebook,
-                      size: 100,
                       color: Colors.black,
                     ),
                     Column(
