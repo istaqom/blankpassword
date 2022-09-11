@@ -1,7 +1,6 @@
+import 'app.dart';
 import 'package:flutter/material.dart';
 
-import 'app.dart';
-import 'create_credential.dart';
 import 'password.dart';
 
 void main() {
@@ -71,28 +70,31 @@ class _MyHomePageState extends State<MyHomePage> {
       // appBar: AppBar(
       //   title: Text(widget.title),
       // ),
-      body: Column(
-        children: <Widget>[
-          const Text(
-            "Sign In",
-            style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
+      body: AppContainer(
+        child: Column(
+          children: <Widget>[
+            const Text(
+              "Sign In",
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const YourPasswordPageWidget(),
-                ),
-              );
-            },
-            child: const Text("Login"),
-          ),
-        ],
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+            TextButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const YourPasswordPageWidget(),
+                  ),
+                );
+              },
+              child: const Text("Login"),
+            ),
+            Row() // biar gk kecil
+          ],
+        ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
     );
   }
 }
