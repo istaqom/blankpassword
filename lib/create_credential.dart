@@ -1,4 +1,5 @@
 import 'package:blankpassword/generate_password.dart';
+import 'package:blankpassword/widget/password_field.dart';
 import 'package:flutter/material.dart';
 
 import 'app.dart';
@@ -63,51 +64,30 @@ class CreateCredentialFormWidgetState
             hintText: "example@example.com",
           ),
         ),
-        TextField(
+        PasswordField(
+          labelText: "Password",
           controller: password,
-          decoration: InputDecoration(
-            icon: const Icon(Icons.password),
-            labelText: "Password",
-            suffixIcon: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                IconButton(
-                  icon: Builder(builder: (context) {
-                    if (showPassword) {
-                      return const Icon(Icons.visibility_off);
-                    } else {
-                      return const Icon(Icons.visibility);
-                    }
-                  }),
-                  onPressed: () {
-                    setState(() {
-                      showPassword = !showPassword;
-                    });
-                  },
-                ),
-                IconButton(
-                  icon: const Icon(Icons.refresh),
-                  onPressed: () async {
-                    final String? result = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const GeneratePasswordWidget(),
-                      ),
-                    );
+          suffixIcon: [
+            IconButton(
+              icon: const Icon(Icons.refresh),
+              onPressed: () async {
+                final String? result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const GeneratePasswordWidget(),
+                  ),
+                );
 
-                    if (!mounted) return;
-                    // ignore if null
-                    if (result == null) return;
+                if (!mounted) return;
+                // ignore if null
+                if (result == null) return;
 
-                    setState(() {
-                      password.text = result;
-                    });
-                  },
-                ),
-              ],
+                setState(() {
+                  password.text = result;
+                });
+              },
             ),
-          ),
-          obscureText: !showPassword,
+          ],
         ),
         Column(
           children: [
