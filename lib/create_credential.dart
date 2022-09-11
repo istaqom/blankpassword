@@ -20,7 +20,7 @@ class _CreateCredentialWidgetState extends State<CreateCredentialWidget> {
         actions: [
           ElevatedButton(
             onPressed: () {
-              print("pressed");
+              Navigator.pop(context);
             },
             child: const Text("Save"),
           ),
