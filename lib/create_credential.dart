@@ -56,7 +56,7 @@ class CreateCredentialFormWidgetState
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return ListView(
       children: <Widget>[
         TextFormField(
           decoration: const InputDecoration(
