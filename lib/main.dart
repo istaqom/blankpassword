@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+import 'app.dart';
+import 'create_credential.dart';
+import 'password.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -43,6 +47,7 @@ class MyApp extends StatelessWidget {
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
         primarySwatch: buildMaterialColor(const Color(0xffd1512d)),
+        scaffoldBackgroundColor: buildMaterialColor(const Color(0xffd1512d)),
       ),
       home: const MyHomePage(title: 'BlankPassword'),
     );
@@ -84,12 +89,23 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Column(
         children: <Widget>[
-          Text(
-            "Sign In", 
+          const Text(
+            "Sign In",
             style: TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.bold,
-            )
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const YourPasswordPageWidget(),
+                ),
+              );
+            },
+            child: const Text("Login"),
           ),
         ],
       ), // This trailing comma makes auto-formatting nicer for build methods.
