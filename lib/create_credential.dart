@@ -49,7 +49,7 @@ class CreateCredentialFormWidget extends StatefulWidget {
 
 class CreateCredentialFormWidgetState
     extends State<CreateCredentialFormWidget> {
-  String name = '';
+  var name = TextEditingController();
   var password = TextEditingController();
   var sites = [TextEditingController()];
   bool showPassword = false;
@@ -59,6 +59,7 @@ class CreateCredentialFormWidgetState
     return ListView(
       children: <Widget>[
         TextFormField(
+          controller: name,
           decoration: const InputDecoration(
             icon: Icon(Icons.person),
             labelText: "Username",
