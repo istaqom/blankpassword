@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
 class PasswordField extends StatefulWidget {
-  const PasswordField({super.key, required this.labelText, this.controller, this.suffixIcon});
+  const PasswordField({super.key, required this.labelText, this.controller, this.suffixIcon, this.readOnly = false});
   final TextEditingController? controller;
   final List<Widget>? suffixIcon;
   final String labelText;
+  final bool readOnly;
 
   @override
   State<PasswordField> createState() => _PasswordFieldState();
