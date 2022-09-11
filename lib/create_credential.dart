@@ -52,6 +52,7 @@ class CreateCredentialFormWidgetState
   String name = '';
   var password = TextEditingController();
   bool showPassword = true;
+  bool showPassword = false;
 
   @override
   Widget build(BuildContext context) {
