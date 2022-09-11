@@ -51,7 +51,7 @@ class CreateCredentialFormWidgetState
     extends State<CreateCredentialFormWidget> {
   String name = '';
   var password = TextEditingController();
-  bool showPassword = true;
+  var sites = [TextEditingController()];
   bool showPassword = false;
 
   @override
@@ -111,11 +111,33 @@ class CreateCredentialFormWidgetState
           ),
           obscureText: !showPassword,
         ),
-        TextFormField(
-          decoration: const InputDecoration(
-            icon: Icon(Icons.web),
-            labelText: "Sites",
-          ),
+        Column(
+          children: [
+            for (var i = 0; i < sites.length; ++i)
+              TextFormField(
+                controller: sites[i],
+                decoration: InputDecoration(
+                  icon: const Icon(Icons.web),
+                  labelText: "URL ${i + 1}",
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.remove),
+                    onPressed: () {
+                      setState(() {
+                        sites.removeAt(i);
+                      });
+                    },
+                  ),
+                ),
+              ),
+          ],
+        ),
+        TextButton(
+          child: const Text("New Site"),
+          onPressed: () {
+            setState(() {
+              sites.add(TextEditingController());
+            });
+          },
         ),
       ],
     );
