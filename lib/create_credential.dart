@@ -47,6 +47,7 @@ class CreateCredentialFormWidget extends StatefulWidget {
 class CreateCredentialFormWidgetState
     extends State<CreateCredentialFormWidget> {
   var name = TextEditingController();
+  var username = TextEditingController();
   var password = TextEditingController();
   var sites = [TextEditingController()];
   var notes = TextEditingController();
@@ -58,6 +59,14 @@ class CreateCredentialFormWidgetState
       children: <Widget>[
         TextField(
           controller: name,
+          decoration: const InputDecoration(
+            icon: Icon(Icons.web),
+            labelText: "Name",
+            hintText: "Facebook",
+          ),
+        ),
+        TextField(
+          controller: username,
           decoration: const InputDecoration(
             icon: Icon(Icons.person),
             labelText: "Username",
