@@ -2,6 +2,47 @@ import 'dart:math';
 
 import 'package:blankpassword/app.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+class GeneratePasswordWidget extends StatefulWidget {
+  const GeneratePasswordWidget({super.key});
+
+  @override
+  State<GeneratePasswordWidget> createState() => _GeneratePasswordWidgetState();
+}
+
+class _GeneratePasswordWidgetState extends State<GeneratePasswordWidget> {
+  String? generatedPassword = "";
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Generate Password"),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context, generatedPassword);
+            },
+            child: const Text("Select"),
+          ),
+        ],
+      ),
+      body: AppContainer(
+        child: SizedBox.expand(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: GeneratePasswordPageWidget(
+              onGeneratePassword: (val) {
+                generatedPassword = val;
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class GeneratePasswordOption {
   var length = 16;
@@ -106,3 +147,155 @@ String generatePassword(GeneratePasswordOption o) {
   return password.toString();
 }
 
+class GeneratePasswordPageWidget extends StatefulWidget {
+  const GeneratePasswordPageWidget(
+      {super.key, required this.onGeneratePassword});
+
+  final Function(String) onGeneratePassword;
+
+  @override
+  State<GeneratePasswordPageWidget> createState() =>
+      GeneratePasswordPageWidgetState();
+}
+
+class GeneratePasswordPageWidgetState
+    extends State<GeneratePasswordPageWidget> {
+  String generatedPassword = "";
+  GeneratePasswordOption options = GeneratePasswordOption();
+  var lengthController = TextEditingController(text: "1");
+
+  @override
+  void initState() {
+    super.initState();
+
+    lengthController.text = options.length.toString();
+    lengthController.addListener(() {
+      options.length = int.tryParse(lengthController.text) ?? 1;
+      applyGeneratedPassword();
+    });
+
+    applyGeneratedPassword();
+  }
+
+  void applyGeneratedPassword() {
+    setGeneratedPassword(generatePassword(options));
+  }
+
+  void setGeneratedPassword(String password) {
+    setState(() {
+      generatedPassword = password;
+      widget.onGeneratePassword(password);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Text(
+          generatedPassword,
+          style: const TextStyle(
+            fontSize: 20,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        ElevatedButton(
+          child: const Text("Generate Password"),
+          onPressed: () {
+            applyGeneratedPassword();
+          },
+        ),
+        TextButton(
+            child: const Text("Copy Password"),
+            onPressed: () {
+              Clipboard.setData(ClipboardData(text: generatedPassword)).then(
+                (_) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text("Password copied to clipboard")));
+                },
+              );
+            }),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text("Length"),
+            const SizedBox(width: 10),
+            Flexible(
+              child: TextField(controller: lengthController),
+            ),
+            Expanded(
+              child: Slider(
+                min: 1,
+                max: 128,
+                value: double.tryParse(lengthController.text) ?? 1,
+                onChanged: (val) {
+                  setState(() {
+                    lengthController.text = val.round().toString();
+                  });
+                },
+              ),
+            )
+          ],
+        ),
+        TextToggle(
+          value: options.upperCase,
+          title: "A-Z",
+          onChanged: (val) {
+            options.upperCase = val;
+            applyGeneratedPassword();
+          },
+        ),
+        TextToggle(
+          value: options.lowerCase,
+          title: "a-z",
+          onChanged: (val) {
+            options.lowerCase = val;
+            applyGeneratedPassword();
+          },
+        ),
+        TextToggle(
+          value: options.number,
+          title: "0-9",
+          onChanged: (val) {
+            options.number = val;
+            applyGeneratedPassword();
+          },
+        ),
+        TextToggle(
+          value: options.special,
+          title: "!@#\$%^&*",
+          onChanged: (val) {
+            options.special = val;
+            applyGeneratedPassword();
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class TextToggle extends StatelessWidget {
+  const TextToggle(
+      {super.key,
+      required this.value,
+      required this.title,
+      required this.onChanged});
+
+  final String title;
+  final bool value;
+  final Function(bool) onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text(title),
+        const Spacer(),
+        Switch(
+          value: value,
+          onChanged: onChanged,
+        )
+      ],
+    );
+  }
+}

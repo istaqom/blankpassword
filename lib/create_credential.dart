@@ -50,7 +50,7 @@ class CreateCredentialFormWidget extends StatefulWidget {
 class CreateCredentialFormWidgetState
     extends State<CreateCredentialFormWidget> {
   String name = '';
-  String password = '';
+  var password = TextEditingController();
   bool showPassword = true;
 
   @override
@@ -65,9 +65,7 @@ class CreateCredentialFormWidgetState
           ),
         ),
         TextFormField(
-          onSaved: (val) {
-            password = val ?? "";
-          },
+          controller: password,
           decoration: InputDecoration(
             icon: const Icon(Icons.password),
             labelText: "Password",
@@ -91,7 +89,7 @@ class CreateCredentialFormWidgetState
                 IconButton(
                   icon: const Icon(Icons.refresh),
                   onPressed: () async {
-                    final String result = await Navigator.push(
+                    final String? result = await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => const GeneratePasswordWidget(),
@@ -99,6 +97,12 @@ class CreateCredentialFormWidgetState
                     );
 
                     if (!mounted) return;
+                    // ignore if null
+                    if (result == null) return;
+
+                    setState(() {
+                      password.text = result;
+                    });
                   },
                 ),
               ],
