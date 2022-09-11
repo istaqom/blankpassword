@@ -5,14 +5,16 @@ import 'package:flutter/material.dart';
 import 'app.dart';
 import 'create_credential.dart';
 
-class YourPasswordPageWidget extends StatefulWidget {
-  const YourPasswordPageWidget({super.key});
+class YourPasswordHomePageWidget extends StatefulWidget {
+  const YourPasswordHomePageWidget({super.key});
 
   @override
-  State<YourPasswordPageWidget> createState() => _YourPasswordPageWidgetState();
+  State<YourPasswordHomePageWidget> createState() =>
+      _YourPasswordHomePageWidgetState();
 }
 
-class _YourPasswordPageWidgetState extends State<YourPasswordPageWidget> {
+class _YourPasswordHomePageWidgetState
+    extends State<YourPasswordHomePageWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -52,7 +52,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const YourPasswordPageWidget(),
+                      builder: (context) => const YourPasswordHomePageWidget(),
                     ),
                   );
                 },
@@ -136,7 +136,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const YourPasswordPageWidget(),
+                      builder: (context) => const YourPasswordHomePageWidget(),
                     ),
                   );
                 },
