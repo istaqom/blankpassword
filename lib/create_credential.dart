@@ -11,7 +11,6 @@ class CreateCredentialWidget extends StatefulWidget {
 }
 
 class _CreateCredentialWidgetState extends State<CreateCredentialWidget> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,13 +25,10 @@ class _CreateCredentialWidgetState extends State<CreateCredentialWidget> {
           ),
         ],
       ),
-      body: AppContainer(
-        child: Form(
-          key: _formKey,
-          child: const Padding(
-            padding: EdgeInsets.all(20),
-            child: CreateCredentialFormWidget(),
-          ),
+      body: const AppContainer(
+        child: Padding(
+          padding: EdgeInsets.all(20),
+          child: CreateCredentialFormWidget(),
         ),
       ),
     );
@@ -59,7 +55,7 @@ class CreateCredentialFormWidgetState
   Widget build(BuildContext context) {
     return ListView(
       children: <Widget>[
-        TextFormField(
+        TextField(
           controller: name,
           decoration: const InputDecoration(
             icon: Icon(Icons.person),
@@ -67,7 +63,7 @@ class CreateCredentialFormWidgetState
             hintText: "example@example.com",
           ),
         ),
-        TextFormField(
+        TextField(
           controller: password,
           decoration: InputDecoration(
             icon: const Icon(Icons.password),
@@ -116,7 +112,7 @@ class CreateCredentialFormWidgetState
         Column(
           children: [
             for (var i = 0; i < sites.length; ++i)
-              TextFormField(
+              TextField(
                 controller: sites[i],
                 decoration: InputDecoration(
                   icon: const Icon(Icons.web),
