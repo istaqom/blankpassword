@@ -24,6 +24,10 @@ class _GeneratePasswordWidgetState extends State<GeneratePasswordWidget> {
             onPressed: () {
               Navigator.pop(context, generatedPassword);
             },
+            style: ElevatedButton.styleFrom(
+              elevation: 0,
+              shadowColor: Colors.transparent,
+              ),
             child: const Text("Select"),
           ),
         ],

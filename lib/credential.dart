@@ -15,7 +15,7 @@ class _CredentialWidgetState extends State<CredentialWidget> {
   var name = "Facebook";
   var username = "qonythazu";
   var password = "password";
-  var sites = ["instagram.com"];
+  var sites = ["facebook.com"];
   var notes = "Akun facebook buat bisnis";
 
   @override
