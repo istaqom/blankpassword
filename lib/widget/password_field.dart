@@ -18,6 +18,7 @@ class _PasswordFieldState extends State<PasswordField> {
   Widget build(BuildContext context) {
     return TextField(
       controller: widget.controller,
+      readOnly: widget.readOnly,
       decoration: InputDecoration(
         icon: const Icon(Icons.password),
         labelText: widget.labelText,
