@@ -22,6 +22,10 @@ class _CreateCredentialWidgetState extends State<CreateCredentialWidget> {
             onPressed: () {
               Navigator.pop(context);
             },
+            style: ElevatedButton.styleFrom(
+              elevation: 0,
+              shadowColor: Colors.transparent,
+              ),
             child: const Text("Save"),
           ),
         ],
