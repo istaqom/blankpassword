@@ -41,8 +41,8 @@ dependencies:
 flutter_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/icon/blankpswlogorectangle.svg"
-  min_sdk_android: 21
+  image_path: "assets/icon/blankpswlogorect.png"
+  # min_sdk_android: 21
 
 dev_dependencies:
   flutter_test:
