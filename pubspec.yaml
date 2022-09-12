@@ -41,6 +41,7 @@ dependencies:
 flutter_icons:
   android: "launcher_icon"
   ios: true
+  remove_alpha_ios: true
   image_path: "assets/icon/blankpswlogorect.png"
   web: 
     generate: true
