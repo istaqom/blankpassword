@@ -1,3 +1,4 @@
+import 'package:blankpassword/auth.dart';
 import 'package:flutter/material.dart';
 
 import 'app.dart';
@@ -20,6 +21,27 @@ class _YourPasswordHomePageWidgetState
       appBar: AppBar(
         title: const Text("Your Password"),
         elevation: 0,
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const LoginWidget(),
+                    ),
+                  );
+            },
+            style: ElevatedButton.styleFrom(
+              elevation: 0,
+              shadowColor: Colors.transparent,
+              ),
+            child: const Icon(
+                    Icons.logout,
+                    size: 25,
+                    color: Colors.white,
+                  ),
+          ),
+        ],
       ),
       body: AppContainerWithFloatingButton(
         floatingActionButton: FloatingActionButton(
