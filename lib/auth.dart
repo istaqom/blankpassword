@@ -108,11 +108,12 @@ class _RegisterWidgetState extends State<RegisterWidget> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              const Text(
+               Text(
                 "Hello!",
                 style: TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 20,
+                  color: Theme.of(context).primaryColor,
                 ),
               ),
               TextField(
