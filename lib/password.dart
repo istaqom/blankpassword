@@ -43,6 +43,7 @@ class _YourPasswordHomePageWidgetState
                   children: [
                     Icon(
                       Icons.create_new_folder,
+                      size: 50,
                       color: Theme.of(context).primaryColor,
                     ),
                   ],
@@ -63,6 +64,7 @@ class _YourPasswordHomePageWidgetState
                 child: Row(children: [
                   Icon(
                     Icons.folder,
+                      size: 50,
                     color: Theme.of(context).primaryColor,
                   ),
                   const Text("Sosmed"),
@@ -115,7 +117,9 @@ class _YourPasswordFolderWidgetState extends State<YourPasswordFolderWidget> {
                   children: const [
                     Icon(
                       Icons.folder,
+                      size: 50,
                     ),
+
                     Text("Sosmed"),
                   ],
                 ),
@@ -137,6 +141,7 @@ class _YourPasswordFolderWidgetState extends State<YourPasswordFolderWidget> {
                     const Icon(
                       Icons.facebook,
                       color: Colors.black,
+                      size: 50,
                     ),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.start,
