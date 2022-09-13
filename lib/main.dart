@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: buildMaterialColor(const Color(0xffd1512d)),
         scaffoldBackgroundColor: buildMaterialColor(const Color(0xffd1512d)),
-        fontFamily: 'Monsterrat',
+        fontFamily: 'Montserrat',
       ),
       home: const LoginWidget(),
     );
