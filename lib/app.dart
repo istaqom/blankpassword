@@ -34,6 +34,7 @@ class AppContainerWithFloatingButton extends StatelessWidget {
     return AppContainer(
       child: Stack(
         children: [
+          child,
           Align(
             alignment: Alignment.bottomRight,
             child: Padding(
@@ -41,7 +42,6 @@ class AppContainerWithFloatingButton extends StatelessWidget {
               child: floatingActionButton,
             ),
           ),
-          child,
         ],
       ),
     );

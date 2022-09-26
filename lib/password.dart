@@ -25,21 +25,21 @@ class _YourPasswordHomePageWidgetState
           ElevatedButton(
             onPressed: () {
               Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LoginWidget(),
-                    ),
-                  );
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const LoginWidget(),
+                ),
+              );
             },
             style: ElevatedButton.styleFrom(
               elevation: 0,
               shadowColor: Colors.transparent,
-              ),
+            ),
             child: const Icon(
-                    Icons.logout,
-                    size: 25,
-                    color: Colors.white,
-                  ),
+              Icons.logout,
+              size: 25,
+              color: Colors.white,
+            ),
           ),
         ],
       ),
@@ -57,7 +57,7 @@ class _YourPasswordHomePageWidgetState
         ),
         child: Padding(
           padding: const EdgeInsets.all(20.0),
-          child: Column(
+          child: ListView(
             children: <Widget>[
               OutlinedButton(
                 onPressed: () {},
@@ -86,7 +86,7 @@ class _YourPasswordHomePageWidgetState
                 child: Row(children: [
                   Icon(
                     Icons.folder,
-                      size: 50,
+                    size: 50,
                     color: Theme.of(context).primaryColor,
                   ),
                   const Text("Sosmed"),
@@ -131,7 +131,7 @@ class _YourPasswordFolderWidgetState extends State<YourPasswordFolderWidget> {
         ),
         child: Padding(
           padding: const EdgeInsets.all(20.0),
-          child: Column(
+          child: ListView(
             children: <Widget>[
               OutlinedButton(
                 onPressed: () {},
@@ -141,7 +141,6 @@ class _YourPasswordFolderWidgetState extends State<YourPasswordFolderWidget> {
                       Icons.folder,
                       size: 50,
                     ),
-
                     Text("Sosmed"),
                   ],
                 ),
