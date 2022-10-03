@@ -148,6 +148,7 @@ class _YourPasswordFolderWidgetState extends State<YourPasswordFolderWidget> {
               const Padding(padding: EdgeInsets.all(2)),
               const Divider(height: 2, thickness: 2),
               const Padding(padding: EdgeInsets.all(2)),
+              for (var _ in List<int>.generate(20, (i) => i))
               OutlinedButton(
                 onPressed: () {
                   Navigator.push(
@@ -170,12 +171,13 @@ class _YourPasswordFolderWidgetState extends State<YourPasswordFolderWidget> {
                       children: const [
                         Text(
                           "Facebook",
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 20,
                           ),
                         ),
-                        Text("qonitaarif5@gmail.com"),
+                        Text("qonitaarif5@gmail.com", overflow: TextOverflow.ellipsis,),
                       ],
                     ),
                   ],
