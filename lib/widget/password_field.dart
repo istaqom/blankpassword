@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 
 class PasswordField extends StatefulWidget {
-  const PasswordField(
-      {super.key,
-      required this.labelText,
-      this.controller,
-      this.suffixIcon,
-      this.readOnly = false});
+  const PasswordField({super.key, required this.labelText, this.controller, this.suffixIcon, this.readOnly = false});
   final TextEditingController? controller;
   final List<Widget>? suffixIcon;
   final String labelText;
@@ -25,11 +20,8 @@ class _PasswordFieldState extends State<PasswordField> {
       controller: widget.controller,
       readOnly: widget.readOnly,
       decoration: InputDecoration(
-        prefixIcon: const Icon(Icons.password),
+        icon: const Icon(Icons.password),
         labelText: widget.labelText,
-        hintStyle: TextStyle(color: Theme.of(context).primaryColor),
-        filled: true,
-        fillColor: Colors.white,
         suffixIcon: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[

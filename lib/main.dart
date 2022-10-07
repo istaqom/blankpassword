@@ -41,8 +41,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'BlankPassword',
       theme: ThemeData(
-        primarySwatch: buildMaterialColor(const Color(0xff472D2D)),
-        scaffoldBackgroundColor: buildMaterialColor(const Color(0xff472D2D)),
+        primarySwatch: buildMaterialColor(const Color(0xffd1512d)),
+        scaffoldBackgroundColor: buildMaterialColor(const Color(0xffd1512d)),
         fontFamily: 'Montserrat',
       ),
       home: const LoginWidget(),

@@ -60,11 +60,6 @@ class _YourPasswordHomePageWidgetState
           child: ListView(
             children: <Widget>[
               OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(
-                    color: Colors.transparent,
-                  )
-                ),
                 onPressed: () {},
                 child: Row(
                   children: [
@@ -73,15 +68,6 @@ class _YourPasswordHomePageWidgetState
                       size: 50,
                       color: Theme.of(context).primaryColor,
                     ),
-                    const Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Text(
-                        "Create New Folder",
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                    )
                   ],
                 ),
               ),
@@ -89,11 +75,6 @@ class _YourPasswordHomePageWidgetState
               const Divider(height: 2, thickness: 2),
               const Padding(padding: EdgeInsets.all(2)),
               OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(
-                    color: Colors.transparent,
-                  )
-                ),
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -108,15 +89,7 @@ class _YourPasswordHomePageWidgetState
                     size: 50,
                     color: Theme.of(context).primaryColor,
                   ),
-                  const Padding(
-                    padding: EdgeInsets.only(left: 10.0),
-                    child: Text(
-                      "Sosmed",
-                      style: TextStyle(
-                        color: Colors.white
-                      ),
-                    ),
-                  ),
+                  const Text("Sosmed"),
                 ]),
               ),
               const Padding(padding: EdgeInsets.all(2)),
@@ -161,11 +134,6 @@ class _YourPasswordFolderWidgetState extends State<YourPasswordFolderWidget> {
           child: ListView(
             children: <Widget>[
               OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(
-                    color: Colors.transparent,
-                  )
-                ),
                 onPressed: () {},
                 child: Row(
                   children: const [
@@ -173,15 +141,7 @@ class _YourPasswordFolderWidgetState extends State<YourPasswordFolderWidget> {
                       Icons.folder,
                       size: 50,
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 10.0),
-                      child: Text(
-                        "Sosmed",
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
+                    Text("Sosmed"),
                   ],
                 ),
               ),
@@ -189,52 +149,38 @@ class _YourPasswordFolderWidgetState extends State<YourPasswordFolderWidget> {
               const Divider(height: 2, thickness: 2),
               const Padding(padding: EdgeInsets.all(2)),
               for (var _ in List<int>.generate(20, (i) => i))
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(
-                      color: Colors.transparent,
-                    )
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const CredentialWidget(),
-                      ),
-                    );
-                  },
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.facebook,
-                        color: Color(0xff472D2D),
-                        size: 50,
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            "Facebook",
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: Color(0xff472D2D),
-                              fontSize: 20,
-                            ),
+              OutlinedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const CredentialWidget(),
+                    ),
+                  );
+                },
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.facebook,
+                      color: Colors.black,
+                      size: 50,
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        Text(
+                          "Facebook",
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 20,
                           ),
-                          Text(
-                            "qonitaarif5@gmail.com", 
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: Colors.white
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                        ),
+                        Text("qonitaarif5@gmail.com", overflow: TextOverflow.ellipsis,),
+                      ],
+                    ),
+                  ],
                 ),
               )
             ],
