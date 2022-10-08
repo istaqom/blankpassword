@@ -29,66 +29,89 @@ class _CredentialWidgetState extends State<CredentialWidget> {
           padding: const EdgeInsets.all(20.0),
           child: ListView(
             children: <Widget>[
-              TextField(
-                controller: TextEditingController(text: name),
-                readOnly: true,
-                decoration: const InputDecoration(
-                  icon: Icon(Icons.web),
-                  labelText: "Name",
-                  hintText: "Facebook",
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: TextField(
+                  controller: TextEditingController(text: name),
+                  readOnly: true,
+                  decoration: InputDecoration(
+                      labelText: "Nama",
+                      prefixIcon: const Icon(Icons.web),
+                      filled: true,
+                      fillColor: Colors.white,
+                      hintText: "Nama",
+                      hintStyle:
+                          TextStyle(color: Theme.of(context).primaryColor)),
                 ),
               ),
-              TextField(
-                controller: TextEditingController(text: username),
-                readOnly: true,
-                decoration: const InputDecoration(
-                  icon: Icon(Icons.person),
-                  labelText: "Username",
-                  hintText: "example@example.com",
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: TextField(
+                  controller: TextEditingController(text: username),
+                  readOnly: true,
+                  decoration: InputDecoration(
+                      labelText: "Username",
+                      prefixIcon: const Icon(Icons.person),
+                      filled: true,
+                      fillColor: Colors.white,
+                      hintText: "Username",
+                      hintStyle:
+                          TextStyle(color: Theme.of(context).primaryColor)),
                 ),
               ),
-              PasswordField(
-                labelText: "Password",
-                controller: TextEditingController(text: password),
-                readOnly: true,
-                suffixIcon: [
-                  IconButton(
-                    icon: const Icon(Icons.copy),
-                    onPressed: () async {
-                      Clipboard.setData(ClipboardData(text: password)).then(
-                        (_) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("Password copied to clipboard"),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
-                ],
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: PasswordField(
+                  labelText: "Password",
+                  controller: TextEditingController(text: password),
+                  readOnly: true,
+                  suffixIcon: [
+                    IconButton(
+                      icon: const Icon(Icons.copy),
+                      onPressed: () async {
+                        Clipboard.setData(ClipboardData(text: password)).then(
+                          (_) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Password copied to clipboard"),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
               Column(
                 children: [
                   for (var i = 0; i < sites.length; ++i)
-                    TextField(
-                      controller: TextEditingController(text: sites[i]),
-                      readOnly: true,
-                      decoration: InputDecoration(
-                        icon: const Icon(Icons.web),
-                        labelText: "URL ${i + 1}",
+                    Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: TextField(
+                        controller: TextEditingController(text: sites[i]),
+                        readOnly: true,
+                        decoration: InputDecoration(
+                            prefixIcon: const Icon(Icons.web),
+                            labelText: "URL ${i + 1}",
+                            filled: true,
+                            fillColor: Colors.white),
                       ),
                     ),
                 ],
               ),
-              TextField(
-                controller: TextEditingController(text: notes),
-                readOnly: true,
-                decoration: const InputDecoration(
-                  label: Text("Notes"),
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: TextField(
+                  controller: TextEditingController(text: notes),
+                  readOnly: true,
+                  decoration: InputDecoration(
+                      labelText: "Notes",
+                      filled: true,
+                      fillColor: Colors.white),
+                  minLines: 4,
+                  maxLines: null,
                 ),
-                minLines: 4,
-                maxLines: null,
               )
             ],
           ),

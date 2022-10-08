@@ -27,24 +27,37 @@ class _LoginWidgetState extends State<LoginWidget> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                "Welcome Back",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  color: Theme.of(context).primaryColor,
+              const Padding(
+                padding: EdgeInsets.only(bottom: 16.0),
+                child: Text(
+                  "Welcome Back",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
                 ),
               ),
-              TextField(
-                controller: email,
-                decoration: const InputDecoration(
-                  labelText: "Email",
-                  icon: Icon(Icons.email),
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: TextField(
+                  controller: email,
+                  decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.email),
+                      labelText: "Email",
+                      filled: true,
+                      fillColor: Colors.white,
+                      hintText: "example@gmail.com",
+                      hintStyle:
+                          TextStyle(color: Theme.of(context).primaryColor)),
                 ),
               ),
-              PasswordField(
-                labelText: "Password",
-                controller: password,
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: PasswordField(
+                  labelText: "Password",
+                  controller: password,
+                ),
               ),
               const SizedBox(height: 10),
               ElevatedButton(
@@ -58,22 +71,29 @@ class _LoginWidgetState extends State<LoginWidget> {
                 },
                 child: const Text("Login"),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("Don't have an account? "),
-                  TextButton(
-                    child: const Text("Sign Up"),
-                    onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const RegisterWidget(),
-                        ),
-                      );
-                    },
-                  ),
-                ],
+              Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("Don't have an account? ",
+                        style: TextStyle(color: Colors.white)),
+                    TextButton(
+                      child: Text("Sign Up",
+                          style: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                              fontWeight: FontWeight.w800)),
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const RegisterWidget(),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               )
             ],
           ),
@@ -108,28 +128,44 @@ class _RegisterWidgetState extends State<RegisterWidget> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-               Text(
-                "Hello!",
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 20,
-                  color: Theme.of(context).primaryColor,
+              const Padding(
+                padding: EdgeInsets.only(bottom: 16.0),
+                child: Text(
+                  "Hello!",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 20,
+                    color: Colors.white,
+                  ),
                 ),
               ),
-              TextField(
-                controller: email,
-                decoration: const InputDecoration(
-                  labelText: "Email",
-                  icon: Icon(Icons.email),
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: TextField(
+                  controller: email,
+                  decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.email),
+                      labelText: "Email",
+                      filled: true,
+                      fillColor: Colors.white,
+                      hintText: "example@gmail.com",
+                      hintStyle:
+                          TextStyle(color: Theme.of(context).primaryColor)),
                 ),
               ),
-              PasswordField(
-                controller: password,
-                labelText: "Password",
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: PasswordField(
+                  controller: password,
+                  labelText: "Password",
+                ),
               ),
-              PasswordField(
-                controller: confirmPassword,
-                labelText: "Confirm Password",
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: PasswordField(
+                  controller: confirmPassword,
+                  labelText: "Confirm Password",
+                ),
               ),
               const SizedBox(height: 20),
               ElevatedButton(
@@ -143,22 +179,31 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                 },
                 child: const Text("Sign Up"),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("Already have an account? "),
-                  TextButton(
-                    child: const Text("Sign In"),
-                    onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const LoginWidget(),
-                        ),
-                      );
-                    },
-                  ),
-                ],
+              Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("Already have an account? ",
+                        style: TextStyle(color: Colors.white)),
+                    TextButton(
+                      child: Text(
+                        "Sign In",
+                        style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                            fontWeight: FontWeight.w800),
+                      ),
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoginWidget(),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               )
             ],
           ),
