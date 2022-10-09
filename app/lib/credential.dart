@@ -35,13 +35,13 @@ class _CredentialWidgetState extends State<CredentialWidget> {
                   controller: TextEditingController(text: name),
                   readOnly: true,
                   decoration: InputDecoration(
-                      labelText: "Nama",
-                      prefixIcon: const Icon(Icons.web),
-                      filled: true,
-                      fillColor: Colors.white,
-                      hintText: "Nama",
-                      hintStyle:
-                          TextStyle(color: Theme.of(context).primaryColor)),
+                    labelText: "Nama",
+                    prefixIcon: const Icon(Icons.web),
+                    filled: true,
+                    fillColor: Colors.white,
+                    hintText: "Nama",
+                    hintStyle: TextStyle(color: Theme.of(context).primaryColor),
+                  ),
                 ),
               ),
               Padding(
@@ -50,13 +50,13 @@ class _CredentialWidgetState extends State<CredentialWidget> {
                   controller: TextEditingController(text: username),
                   readOnly: true,
                   decoration: InputDecoration(
-                      labelText: "Username",
-                      prefixIcon: const Icon(Icons.person),
-                      filled: true,
-                      fillColor: Colors.white,
-                      hintText: "Username",
-                      hintStyle:
-                          TextStyle(color: Theme.of(context).primaryColor)),
+                    labelText: "Username",
+                    prefixIcon: const Icon(Icons.person),
+                    filled: true,
+                    fillColor: Colors.white,
+                    hintText: "Username",
+                    hintStyle: TextStyle(color: Theme.of(context).primaryColor),
+                  ),
                 ),
               ),
               Padding(
