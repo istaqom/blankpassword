@@ -66,12 +66,13 @@ class CreateCredentialFormWidgetState
           child: TextField(
             controller: name,
             decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.web),
-                labelText: "Nama",
-                filled: true,
-                fillColor: Colors.white,
-                hintText: "Nama",
-                hintStyle: TextStyle(color: Theme.of(context).primaryColor)),
+              prefixIcon: const Icon(Icons.web),
+              labelText: "Nama",
+              filled: true,
+              fillColor: Colors.white,
+              hintText: "Nama",
+              hintStyle: TextStyle(color: Theme.of(context).primaryColor),
+            ),
           ),
         ),
         Padding(
@@ -79,12 +80,13 @@ class CreateCredentialFormWidgetState
           child: TextField(
             controller: username,
             decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.person),
-                labelText: "Username",
-                filled: true,
-                fillColor: Colors.white,
-                hintText: "Username",
-                hintStyle: TextStyle(color: Theme.of(context).primaryColor)),
+              prefixIcon: const Icon(Icons.person),
+              labelText: "Username",
+              filled: true,
+              fillColor: Colors.white,
+              hintText: "Username",
+              hintStyle: TextStyle(color: Theme.of(context).primaryColor),
+            ),
           ),
         ),
         Padding(
@@ -143,9 +145,10 @@ class CreateCredentialFormWidgetState
           ],
         ),
         TextButton(
-          child: const Text("New Site", style: TextStyle(
-            color: Colors.white
-          ),),
+          child: const Text(
+            "New Site",
+            style: TextStyle(color: Colors.white),
+          ),
           onPressed: () {
             setState(() {
               sites.add(TextEditingController());
@@ -157,11 +160,12 @@ class CreateCredentialFormWidgetState
           child: TextField(
             controller: notes,
             decoration: InputDecoration(
-                labelText: "Notes",
-                filled: true,
-                fillColor: Colors.white,
-                hintText: "Notes",
-                hintStyle: TextStyle(color: Theme.of(context).primaryColor)),
+              labelText: "Notes",
+              filled: true,
+              fillColor: Colors.white,
+              hintText: "Notes",
+              hintStyle: TextStyle(color: Theme.of(context).primaryColor),
+            ),
             minLines: 4,
             maxLines: null,
           ),

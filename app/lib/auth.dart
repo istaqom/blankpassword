@@ -43,13 +43,13 @@ class _LoginWidgetState extends State<LoginWidget> {
                 child: TextField(
                   controller: email,
                   decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.email),
-                      labelText: "Email",
-                      filled: true,
-                      fillColor: Colors.white,
-                      hintText: "example@gmail.com",
-                      hintStyle:
-                          TextStyle(color: Theme.of(context).primaryColor)),
+                    prefixIcon: const Icon(Icons.email),
+                    labelText: "Email",
+                    filled: true,
+                    fillColor: Colors.white,
+                    hintText: "example@gmail.com",
+                    hintStyle: TextStyle(color: Theme.of(context).primaryColor),
+                  ),
                 ),
               ),
               Padding(
@@ -76,13 +76,17 @@ class _LoginWidgetState extends State<LoginWidget> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Don't have an account? ",
-                        style: TextStyle(color: Colors.white)),
+                    const Text(
+                      "Don't have an account? ",
+                      style: TextStyle(color: Colors.white),
+                    ),
                     TextButton(
-                      child: Text("Sign Up",
-                          style: TextStyle(
-                              color: Theme.of(context).primaryColor,
-                              fontWeight: FontWeight.w800)),
+                      child: Text(
+                        "Sign Up",
+                        style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                            fontWeight: FontWeight.w800),
+                      ),
                       onPressed: () {
                         Navigator.pushReplacement(
                           context,
@@ -144,13 +148,15 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                 child: TextField(
                   controller: email,
                   decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.email),
-                      labelText: "Email",
-                      filled: true,
-                      fillColor: Colors.white,
-                      hintText: "example@gmail.com",
-                      hintStyle:
-                          TextStyle(color: Theme.of(context).primaryColor)),
+                    prefixIcon: const Icon(Icons.email),
+                    labelText: "Email",
+                    filled: true,
+                    fillColor: Colors.white,
+                    hintText: "example@gmail.com",
+                    hintStyle: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
                 ),
               ),
               Padding(
@@ -184,8 +190,10 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Already have an account? ",
-                        style: TextStyle(color: Colors.white)),
+                    const Text(
+                      "Already have an account? ",
+                      style: TextStyle(color: Colors.white),
+                    ),
                     TextButton(
                       child: Text(
                         "Sign In",
