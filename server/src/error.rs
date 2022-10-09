@@ -12,6 +12,30 @@ pub enum Error {
 
     #[error("{0} not found")]
     NotFound(Uri),
+
+    #[error("{0}")]
+    PasswordHashError(#[from] password_hash::Error),
+
+    #[error("{0}")]
+    DatabaseError(#[from] sea_orm::DbErr),
+
+    #[error("{0} must unique")]
+    MustUniqueError(String),
+
+    #[error("{0}")]
+    Unauthorized(UnauthorizedType),
+
+    #[error("{1}")]
+    CustomStatus(StatusCode, anyhow::Error)
+}
+
+#[derive(Debug, thiserror::Error)]
+pub enum UnauthorizedType {
+    #[error("Wrong Username or Password")]
+    WrongUsernameOrPassword,
+
+    #[error("Invalid session id")]
+    InvalidSessionId
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -30,7 +54,11 @@ impl From<Error> for ErrorJson {
 
         let errors = match err {
             Error::ValidationError(err) => serde_json::to_value(err).ok(),
-            Error::NotFound(..) => None,
+            Error::NotFound(..)
+            | Error::PasswordHashError(..)
+            | Error::DatabaseError(..)
+            | Error::MustUniqueError(..)
+            | Error::Unauthorized(..) | Error::CustomStatus(..)=> None,
         };
 
         Self {
@@ -44,8 +72,15 @@ impl From<Error> for ErrorJson {
 impl IntoResponse for Error {
     fn into_response(self) -> axum::response::Response {
         let status = match self {
-            Self::ValidationError(..) => StatusCode::BAD_REQUEST,
+            Self::Unauthorized(..) => StatusCode::UNAUTHORIZED,
+            Self::ValidationError(..) | Self::MustUniqueError(..) => {
+                StatusCode::UNPROCESSABLE_ENTITY
+            }
             Self::NotFound(..) => StatusCode::NOT_FOUND,
+            Self::PasswordHashError(..) | Self::DatabaseError(..) => {
+                StatusCode::INTERNAL_SERVER_ERROR
+            }
+            Self::CustomStatus(code, ..) => code,
         };
 
         let error = ErrorJson::from(self);
@@ -77,9 +112,13 @@ impl Error {
 
         variant! {
             NotFound(..),
-            ValidationError(..)
+            ValidationError(..),
+            PasswordHashError(..),
+            DatabaseError(..),
+            MustUniqueError(..),
+            Unauthorized(..),
+            CustomStatus(..)
         }
         .to_string()
     }
 }
-
