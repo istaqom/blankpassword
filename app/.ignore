@@ -1,0 +1,5 @@
+assets/
+ios/Runner*
+macos/Runner*
+macos/Flutter
+web/icons

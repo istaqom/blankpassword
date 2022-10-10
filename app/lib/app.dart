@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class AppContainer extends StatelessWidget {
@@ -47,4 +46,3 @@ class AppContainerWithFloatingButton extends StatelessWidget {
     );
   }
 }
-
