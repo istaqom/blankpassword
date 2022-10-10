@@ -1,3 +1,4 @@
+import 'package:authentication_repository/authentication_repository.dart';
 import 'package:blankpassword/app.dart';
 import 'package:blankpassword/auth.dart';
 import 'package:blankpassword/change_password.dart';
@@ -6,7 +7,9 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
 class AccountSettings extends StatefulWidget {
-  const AccountSettings({super.key});
+  const AccountSettings({super.key, required this.authenticationRepository});
+
+  final AuthenticationRepository authenticationRepository;
 
   @override
   State<AccountSettings> createState() => _AccountSettingsState();
@@ -50,13 +53,8 @@ class _AccountSettingsState extends State<AccountSettings> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context, 
-                      MaterialPageRoute(
-                        builder: (context) => const LoginWidget()
-                      )
-                    );
+                  onPressed: () async {
+                    await widget.authenticationRepository.logOut();
                   }, 
                   child: Row(
                     children: [
