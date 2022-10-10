@@ -33,55 +33,57 @@ class _LoginWidgetState extends State<LoginWidget> {
       body: AppContainer(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Padding(
-                padding: EdgeInsets.only(bottom: 16.0),
-                child: Text(
-                  "Welcome Back",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 16.0),
+                  child: Text(
+                    "Welcome Back",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
-              ),
-              LoginForm(bloc: widget.bloc),
-              Padding(
-                padding: const EdgeInsets.only(top: 16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      "Don't have an account? ",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    TextButton(
-                      child: Text(
-                        "Sign Up",
-                        style: TextStyle(
-                          color: Theme.of(context).primaryColor,
-                          fontWeight: FontWeight.w800,
-                        ),
+                LoginForm(bloc: widget.bloc),
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Don't have an account? ",
+                        style: TextStyle(color: Colors.white),
                       ),
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => RegisterWidget(
-                              authenticationRepository:
-                                  widget.authenticationRepository,
-                            ),
+                      TextButton(
+                        child: Text(
+                          "Sign Up",
+                          style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                            fontWeight: FontWeight.w800,
                           ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              )
-            ],
+                        ),
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => RegisterWidget(
+                                authenticationRepository:
+                                    widget.authenticationRepository,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -117,8 +119,6 @@ class _RegisterWidgetState extends State<RegisterWidget> {
           child: Center(
             child: SingleChildScrollView(
               child: Column(
-                // mainAxisAlignment: MainAxisAlignment.center,
-                // crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   const Padding(
                     padding: EdgeInsets.only(bottom: 16.0),
