@@ -1,11 +1,21 @@
+import 'package:authentication_repository/authentication_repository.dart';
+import 'package:blankpassword/auth/blocs/register_bloc.dart';
+import 'package:blankpassword/auth/view/register_form.dart';
 import 'package:blankpassword/widget/password_field.dart';
 import 'package:flutter/material.dart';
 
 import 'app.dart';
+import 'auth/blocs/login_bloc.dart';
+import 'auth/view/login_form.dart';
 import 'password.dart';
 
 class LoginWidget extends StatefulWidget {
-  const LoginWidget({super.key});
+  LoginWidget({super.key, required this.authenticationRepository})
+      : bloc = LoginBloc(authenticationRepository: authenticationRepository);
+
+  final AuthenticationRepository authenticationRepository;
+
+  final LoginBloc bloc;
 
   @override
   State<LoginWidget> createState() => _LoginWidgetState();
@@ -38,39 +48,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: TextField(
-                  controller: email,
-                  decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.email),
-                    labelText: "Email",
-                    filled: true,
-                    fillColor: Colors.white,
-                    hintText: "example@gmail.com",
-                    hintStyle: TextStyle(color: Theme.of(context).primaryColor),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: PasswordField(
-                  labelText: "Password",
-                  controller: password,
-                ),
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const YourPasswordHomePageWidget(),
-                    ),
-                  );
-                },
-                child: const Text("Login"),
-              ),
+              LoginForm(bloc: widget.bloc),
               Padding(
                 padding: const EdgeInsets.only(top: 16.0),
                 child: Row(
@@ -84,14 +62,18 @@ class _LoginWidgetState extends State<LoginWidget> {
                       child: Text(
                         "Sign Up",
                         style: TextStyle(
-                            color: Theme.of(context).primaryColor,
-                            fontWeight: FontWeight.w800),
+                          color: Theme.of(context).primaryColor,
+                          fontWeight: FontWeight.w800,
+                        ),
                       ),
                       onPressed: () {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const RegisterWidget(),
+                            builder: (context) => RegisterWidget(
+                              authenticationRepository:
+                                  widget.authenticationRepository,
+                            ),
                           ),
                         );
                       },
@@ -108,7 +90,11 @@ class _LoginWidgetState extends State<LoginWidget> {
 }
 
 class RegisterWidget extends StatefulWidget {
-  const RegisterWidget({super.key});
+  RegisterWidget({super.key, required this.authenticationRepository})
+      : bloc = RegisterBloc(authenticationRepository: authenticationRepository);
+
+  final AuthenticationRepository authenticationRepository;
+  final RegisterBloc bloc;
 
   @override
   State<RegisterWidget> createState() => _RegisterWidgetState();
@@ -143,48 +129,8 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: TextField(
-                  controller: email,
-                  decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.email),
-                    labelText: "Email",
-                    filled: true,
-                    fillColor: Colors.white,
-                    hintText: "example@gmail.com",
-                    hintStyle: TextStyle(
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: PasswordField(
-                  controller: password,
-                  labelText: "Password",
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: PasswordField(
-                  controller: confirmPassword,
-                  labelText: "Confirm Password",
-                ),
-              ),
+              RegisterForm(bloc: widget.bloc),
               const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const YourPasswordHomePageWidget(),
-                    ),
-                  );
-                },
-                child: const Text("Sign Up"),
-              ),
               Padding(
                 padding: const EdgeInsets.only(top: 16.0),
                 child: Row(
@@ -205,7 +151,10 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const LoginWidget(),
+                            builder: (context) => LoginWidget(
+                              authenticationRepository:
+                                  widget.authenticationRepository,
+                            ),
                           ),
                         );
                       },

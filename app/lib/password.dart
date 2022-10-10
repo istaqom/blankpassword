@@ -24,12 +24,12 @@ class _YourPasswordHomePageWidgetState
         actions: [
           ElevatedButton(
             onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const LoginWidget(),
-                ),
-              );
+              // Navigator.pushReplacement(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) => const LoginWidget(),
+              //   ),
+              // );
             },
             style: ElevatedButton.styleFrom(
               elevation: 0,
@@ -61,10 +61,9 @@ class _YourPasswordHomePageWidgetState
             children: <Widget>[
               OutlinedButton(
                 style: OutlinedButton.styleFrom(
-                  side: const BorderSide(
-                    color: Colors.transparent,
-                  )
-                ),
+                    side: const BorderSide(
+                  color: Colors.transparent,
+                )),
                 onPressed: () {},
                 child: Row(
                   children: [
@@ -90,10 +89,9 @@ class _YourPasswordHomePageWidgetState
               const Padding(padding: EdgeInsets.all(2)),
               OutlinedButton(
                 style: OutlinedButton.styleFrom(
-                  side: const BorderSide(
-                    color: Colors.transparent,
-                  )
-                ),
+                    side: const BorderSide(
+                  color: Colors.transparent,
+                )),
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -112,9 +110,7 @@ class _YourPasswordHomePageWidgetState
                     padding: EdgeInsets.only(left: 10.0),
                     child: Text(
                       "Sosmed",
-                      style: TextStyle(
-                        color: Colors.white
-                      ),
+                      style: TextStyle(color: Colors.white),
                     ),
                   ),
                 ]),
@@ -162,10 +158,9 @@ class _YourPasswordFolderWidgetState extends State<YourPasswordFolderWidget> {
             children: <Widget>[
               OutlinedButton(
                 style: OutlinedButton.styleFrom(
-                  side: const BorderSide(
-                    color: Colors.transparent,
-                  )
-                ),
+                    side: const BorderSide(
+                  color: Colors.transparent,
+                )),
                 onPressed: () {},
                 child: Row(
                   children: const [
@@ -189,54 +184,51 @@ class _YourPasswordFolderWidgetState extends State<YourPasswordFolderWidget> {
               const Divider(height: 2, thickness: 2),
               const Padding(padding: EdgeInsets.all(2)),
               for (var _ in List<int>.generate(20, (i) => i))
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                        side: const BorderSide(
                       color: Colors.transparent,
-                    )
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const CredentialWidget(),
-                      ),
-                    );
-                  },
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.facebook,
-                        color: Color(0xff472D2D),
-                        size: 50,
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            "Facebook",
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: Color(0xff472D2D),
-                              fontSize: 20,
+                    )),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CredentialWidget(),
+                        ),
+                      );
+                    },
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.facebook,
+                          color: Color(0xff472D2D),
+                          size: 50,
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: const [
+                            Text(
+                              "Facebook",
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: Color(0xff472D2D),
+                                fontSize: 20,
+                              ),
                             ),
-                          ),
-                          Text(
-                            "qonitaarif5@gmail.com", 
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: Colors.white
+                            Text(
+                              "qonitaarif5@gmail.com",
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(color: Colors.white),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              )
+                )
             ],
           ),
         ),

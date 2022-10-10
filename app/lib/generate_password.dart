@@ -27,7 +27,7 @@ class _GeneratePasswordWidgetState extends State<GeneratePasswordWidget> {
             style: ElevatedButton.styleFrom(
               elevation: 0,
               shadowColor: Colors.transparent,
-              ),
+            ),
             child: const Text("Select"),
           ),
         ],
@@ -67,7 +67,8 @@ String generatePassword(GeneratePasswordOption o) {
   var random = Random.secure();
   List<Case> positions = [];
 
-  final minLength = o.minUpperCase + o.minLowerCase + o.minNumber + o.minSpecial;
+  final minLength =
+      o.minUpperCase + o.minLowerCase + o.minNumber + o.minSpecial;
   final length = max(minLength, o.length);
 
   add(bool add, int min, Case val) {

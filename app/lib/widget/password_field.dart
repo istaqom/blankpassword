@@ -6,11 +6,13 @@ class PasswordField extends StatefulWidget {
       required this.labelText,
       this.controller,
       this.suffixIcon,
+      this.onChanged,
       this.readOnly = false});
   final TextEditingController? controller;
   final List<Widget>? suffixIcon;
   final String labelText;
   final bool readOnly;
+  final Function(String)? onChanged;
 
   @override
   State<PasswordField> createState() => _PasswordFieldState();
@@ -24,6 +26,7 @@ class _PasswordFieldState extends State<PasswordField> {
     return TextField(
       controller: widget.controller,
       readOnly: widget.readOnly,
+      onChanged: widget.onChanged,
       decoration: InputDecoration(
         prefixIcon: const Icon(Icons.password),
         labelText: widget.labelText,
