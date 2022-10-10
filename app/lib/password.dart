@@ -1,3 +1,4 @@
+import 'package:authentication_repository/authentication_repository.dart';
 import 'package:blankpassword/auth.dart';
 import 'package:blankpassword/settings.dart';
 import 'package:flutter/material.dart';
@@ -7,8 +8,9 @@ import 'create_credential.dart';
 import 'credential.dart';
 
 class YourPasswordHomePageWidget extends StatefulWidget {
-  const YourPasswordHomePageWidget({super.key});
+  const YourPasswordHomePageWidget({super.key, required this.authenticationRepository});
 
+  final AuthenticationRepository authenticationRepository;
   @override
   State<YourPasswordHomePageWidget> createState() =>
       _YourPasswordHomePageWidgetState();
@@ -28,7 +30,7 @@ class _YourPasswordHomePageWidgetState
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const AccountSettings(),
+                  builder: (context) =>  AccountSettings(authenticationRepository: widget.authenticationRepository,),
                 ),
               );
             },

@@ -102,7 +102,7 @@ class _MyAppState extends State<MyApp> {
               case AuthenticationStatus.authenticated:
                 _navigator.pushAndRemoveUntil<void>(
                   MaterialPageRoute(
-                    builder: (_) => const YourPasswordHomePageWidget(),
+                    builder: (_) =>  YourPasswordHomePageWidget(authenticationRepository: widget.authenticationRepository,),
                   ),
                   (route) => false,
                 );
