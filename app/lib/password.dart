@@ -1,4 +1,5 @@
 import 'package:blankpassword/auth.dart';
+import 'package:blankpassword/settings.dart';
 import 'package:flutter/material.dart';
 
 import 'app.dart';
@@ -24,19 +25,19 @@ class _YourPasswordHomePageWidgetState
         actions: [
           ElevatedButton(
             onPressed: () {
-              // Navigator.pushReplacement(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => const LoginWidget(),
-              //   ),
-              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AccountSettings(),
+                ),
+              );
             },
             style: ElevatedButton.styleFrom(
               elevation: 0,
               shadowColor: Colors.transparent,
             ),
             child: const Icon(
-              Icons.logout,
+              Icons.person,
               size: 25,
               color: Colors.white,
             ),
