@@ -10,6 +10,13 @@ mod user;
 #[tokio::main]
 async fn main() {
     dotenvy::dotenv().ok();
+    tracing_subscriber::registry()
+        .with(tracing_subscriber::EnvFilter::new(
+            std::env::var("RUST_LOG")
+                .unwrap_or_else(|_| "blankpassword=debug,tower_http=debug".into()),
+        ))
+        .with(tracing_subscriber::fmt::layer())
+        .init();
 
     let mut opt =
         ConnectOptions::new(std::env::var("DATABASE_URL").expect("DATABASE_URL required"));
