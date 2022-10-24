@@ -1,6 +1,8 @@
+use std::net::SocketAddr;
+
 use axum::{handler::Handler, http::Uri, Extension, Router};
 use sea_orm::{ConnectOptions, Database};
-use tracing_subscriber::layer::SubscriberExt;
+use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 mod api;
 mod entity;
@@ -38,9 +40,13 @@ async fn main() {
     let app = Router::new()
         .nest("/api", Router::new().nest("/v1", apiv1))
         .fallback(handle_404.into_service())
-        .layer(Extension(db));
+        .layer(Extension(db))
+        .layer(tower_http::trace::TraceLayer::new_for_http());
 
-    axum::Server::bind(&"0.0.0.0:3000".parse().unwrap())
+    let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
+    tracing::debug!("listening on {}", addr);
+
+    axum::Server::bind(&addr)
         .serve(app.into_make_service())
         .await
         .unwrap();
