@@ -1,5 +1,6 @@
 use axum::{handler::Handler, http::Uri, Extension, Router};
 use sea_orm::{ConnectOptions, Database};
+use tracing_subscriber::layer::SubscriberExt;
 
 mod api;
 mod entity;
