@@ -114,6 +114,8 @@ fn hash_password(password: &str) -> Result<String, Error> {
 
 #[cfg(test)]
 mod tests {
+    use crate::session::Session;
+
     use super::*;
     use migration::MigratorTrait;
     use sea_orm::{Database, DatabaseConnection};
