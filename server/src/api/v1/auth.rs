@@ -182,7 +182,7 @@ mod tests {
         };
 
         let Json(user) = profile(
-            crate::user::User::from_session(&bootstrap.connection, session)
+            crate::user::User::from_session(&bootstrap.connection(), session)
                 .await
                 .unwrap(),
         )

@@ -14,7 +14,7 @@ mod tests {
         user_model: crate::entity::user::Model,
         user_password: String,
         session: Session,
-        pub connection: DatabaseConnection,
+        connection: DatabaseConnection,
     }
 
     impl Bootstrap {
@@ -47,6 +47,10 @@ mod tests {
                 session,
                 connection: self.connection.clone(),
             }
+        }
+
+        pub fn connection(&self) -> &DatabaseConnection {
+            &self.connection
         }
     }
 
