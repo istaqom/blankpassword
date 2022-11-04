@@ -17,14 +17,14 @@ use crate::user::User;
 #[derive(Debug, Serialize, Deserialize, Validate, Clone)]
 pub struct AuthRequest {
     #[validate(email)]
-    email: String,
+    pub email: String,
     #[validate(length(min = 8, max = 64))]
-    password: String,
+    pub password: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct LoginResponse {
-    session: String,
+    pub session: String,
 }
 
 pub async fn login(

@@ -26,7 +26,7 @@ pub enum Error {
     Unauthorized(UnauthorizedType),
 
     #[error("{1}")]
-    CustomStatus(StatusCode, anyhow::Error)
+    CustomStatus(StatusCode, anyhow::Error),
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -35,7 +35,10 @@ pub enum UnauthorizedType {
     WrongUsernameOrPassword,
 
     #[error("Invalid session id")]
-    InvalidSessionId
+    InvalidSessionId,
+
+    #[error("You have no permission to access this resource")]
+    NoPermission,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -58,7 +61,8 @@ impl From<Error> for ErrorJson {
             | Error::PasswordHashError(..)
             | Error::DatabaseError(..)
             | Error::MustUniqueError(..)
-            | Error::Unauthorized(..) | Error::CustomStatus(..)=> None,
+            | Error::Unauthorized(..)
+            | Error::CustomStatus(..) => None,
         };
 
         Self {

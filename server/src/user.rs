@@ -36,7 +36,7 @@ where
 
 impl User {
     pub async fn from_session(db: &DatabaseConnection, session: Session) -> Result<Self, Error> {
-        let session = session.get_user_id(&db).await?;
+        let session = session.get_user_id(db).await?;
 
         let user = entity::user::Entity::find_by_id(session.user_id)
             .one(db)
@@ -51,5 +51,30 @@ impl User {
             id: user.id,
             email: user.email,
         })
+    }
+}
+
+pub struct UserUuid(pub Uuid);
+
+#[async_trait]
+impl<B> FromRequest<B> for UserUuid
+where
+    B: Send,
+{
+    type Rejection = Error;
+
+    async fn from_request(
+        req: &mut axum::extract::RequestParts<B>,
+    ) -> Result<Self, Self::Rejection> {
+        let Extension(db) = req
+            .extract::<Extension<DatabaseConnection>>()
+            .await
+            .unwrap();
+
+        let session = req.extract::<Session>().await?;
+
+        let model = session.get_user_id(&db).await?;
+
+        Ok(Self(model.user_id))
     }
 }
