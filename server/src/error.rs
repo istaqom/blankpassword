@@ -37,6 +37,12 @@ pub enum UnauthorizedType {
     #[error("Invalid session id")]
     InvalidSessionId,
 
+    #[error("Wrong Password")]
+    WrongPassword,
+
+    #[error("Password doesn't match")]
+    PasswordNotMatch,
+
     #[error("You have no permission to access this resource")]
     NoPermission,
 }

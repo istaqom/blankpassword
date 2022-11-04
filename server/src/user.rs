@@ -34,7 +34,27 @@ where
     }
 }
 
-impl User {
+#[async_trait]
+impl<B> FromRequest<B> for crate::entity::user::Model
+where
+    B: Send,
+{
+    type Rejection = Error;
+
+    async fn from_request(
+        req: &mut axum::extract::RequestParts<B>,
+    ) -> Result<Self, Self::Rejection> {
+        let Extension(db) = req
+            .extract::<Extension<DatabaseConnection>>()
+            .await
+            .unwrap();
+
+        let session = req.extract::<Session>().await?;
+        Self::from_session(&db, session).await
+    }
+}
+
+impl crate::entity::user::Model {
     pub async fn from_session(db: &DatabaseConnection, session: Session) -> Result<Self, Error> {
         let session = session.get_user_id(db).await?;
 
@@ -42,10 +62,16 @@ impl User {
             .one(db)
             .await?;
 
-        let user = match user {
-            Some(user) => user,
-            None => return Err(Error::Unauthorized(UnauthorizedType::InvalidSessionId)),
-        };
+        match user {
+            Some(user) => Ok(user),
+            None => Err(Error::Unauthorized(UnauthorizedType::InvalidSessionId)),
+        }
+    }
+}
+
+impl User {
+    pub async fn from_session(db: &DatabaseConnection, session: Session) -> Result<Self, Error> {
+        let user = crate::entity::user::Model::from_session(db, session).await?;
 
         Ok(User {
             id: user.id,

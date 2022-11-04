@@ -91,6 +91,32 @@ pub async fn register(
     Ok(Json(LoginResponse { session }))
 }
 
+#[derive(Debug, Serialize, Deserialize, Validate, Clone)]
+pub struct ChangePasswordRequest {
+    old_password: String,
+    new_password: String,
+}
+
+pub async fn change_password(
+    Extension(db): Extension<DatabaseConnection>,
+    user: crate::entity::user::Model,
+    Json(request): Json<ChangePasswordRequest>,
+) -> Result<(), Error> {
+    println!("{:?} {:?}", request, user);
+    if !verify_password(&request.old_password, &user.password) {
+        return Err(Error::Unauthorized(UnauthorizedType::WrongPassword));
+    }
+
+    let model = user::ActiveModel {
+        id: ActiveValue::Set(user.id),
+        password: ActiveValue::Set(hash_password(&request.new_password)?),
+        ..Default::default()
+    };
+    user::Entity::update(model).exec(&db).await?;
+
+    Ok(())
+}
+
 fn verify_password(password: &str, hashed: &str) -> bool {
     let argon = Argon2::default();
 
@@ -128,20 +154,18 @@ mod tests {
 
     #[tokio::test]
     pub async fn test_login() {
+        let bootstrap = super::super::tests::bootstrap().await;
         let req = AuthRequest {
-            email: "example@example.com".to_string(),
-            password: "examplepassword".to_string(),
+            email: bootstrap.user_email(),
+            password: bootstrap.user_password(),
         };
 
-        let db = Extension(connection().await);
-
-        register(db.clone(), Json(req.clone())).await.unwrap();
-
-        let Json(session) = login(db.clone(), Json(req.clone())).await.unwrap();
+        println!("{:?}", req);
+        let Json(session) = login(bootstrap.db(), Json(req.clone())).await.unwrap();
 
         assert!(matches!(
             login(
-                db.clone(),
+                bootstrap.db(),
                 Json(AuthRequest {
                     password: "wrongpassword".to_string(),
                     ..req.clone()
@@ -157,7 +181,12 @@ mod tests {
             bearer: axum_auth::AuthBearer(session.session),
         };
 
-        let Json(user) = profile(crate::user::User::from_session(&db, session).await.unwrap()).await;
+        let Json(user) = profile(
+            crate::user::User::from_session(&bootstrap.connection, session)
+                .await
+                .unwrap(),
+        )
+        .await;
         assert_eq!(user.email, req.email);
     }
 
@@ -182,5 +211,55 @@ mod tests {
         let password = "examplepassword";
         let hashed = hash_password(password).unwrap();
         assert!(verify_password(password, &hashed));
+    }
+
+    #[tokio::test]
+    pub async fn test_change_password() {
+        let bootstrap = super::super::tests::bootstrap().await;
+
+        let new_password = "new_password";
+        let req = ChangePasswordRequest {
+            old_password: bootstrap.user_password(),
+            new_password: new_password.to_string(),
+        };
+
+        change_password(
+            bootstrap.db(),
+            bootstrap.user_model().await,
+            Json(ChangePasswordRequest {
+                old_password: "wrongpassword".to_string(),
+                new_password: "wrongpassword".to_string(),
+            }),
+        )
+        .await
+        .expect_err("wrong password should fail");
+
+        change_password(
+            bootstrap.db(),
+            bootstrap.user_model().await,
+            Json(req.clone()),
+        )
+        .await
+        .expect("should success");
+
+        login(
+            bootstrap.db(),
+            Json(AuthRequest {
+                email: bootstrap.user_email(),
+                password: new_password.to_string(),
+            }),
+        )
+        .await
+        .expect("new password should be correct");
+
+        login(
+            bootstrap.db(),
+            Json(AuthRequest {
+                email: bootstrap.user_email(),
+                password: bootstrap.user_password(),
+            }),
+        )
+        .await
+        .expect_err("old password should error");
     }
 }
