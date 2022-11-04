@@ -35,7 +35,11 @@ async fn main() {
             Router::new()
                 .route("/login", axum::routing::post(api::v1::auth::login))
                 .route("/register", axum::routing::post(api::v1::auth::register))
-                .route("/profile", axum::routing::get(api::v1::auth::profile)),
+                .route("/profile", axum::routing::get(api::v1::auth::profile))
+                .route(
+                    "/changepassword",
+                    axum::routing::post(api::v1::auth::change_password),
+                ),
         )
         .nest(
             "/credential",

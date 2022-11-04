@@ -28,12 +28,16 @@ pub async fn generate_session(
     .map(|_| rand_string)
 }
 
+#[derive(Clone)]
 pub struct Session {
     pub bearer: axum_auth::AuthBearer,
 }
 
 impl Session {
-    pub async fn get_user_id(&self, db: &DatabaseConnection) -> Result<entity::session::Model, Error> {
+    pub async fn get_user_id(
+        &self,
+        db: &DatabaseConnection,
+    ) -> Result<entity::session::Model, Error> {
         let it = entity::session::Entity::find_by_id(self.bearer.0.clone())
             .one(db)
             .await?;
