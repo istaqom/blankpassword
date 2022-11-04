@@ -29,13 +29,21 @@ async fn main() {
         .await
         .expect("cannot connect to database");
 
-    let apiv1 = Router::new().nest(
-        "/auth",
-        Router::new()
-            .route("/login", axum::routing::post(api::v1::auth::login))
-            .route("/register", axum::routing::post(api::v1::auth::register))
-            .route("/profile", axum::routing::get(api::v1::auth::profile)),
-    );
+    let apiv1 = Router::new()
+        .nest(
+            "/auth",
+            Router::new()
+                .route("/login", axum::routing::post(api::v1::auth::login))
+                .route("/register", axum::routing::post(api::v1::auth::register))
+                .route("/profile", axum::routing::get(api::v1::auth::profile)),
+        )
+        .nest(
+            "/credential",
+            Router::new()
+                .route("/", axum::routing::post(api::v1::credential::store))
+                .route("/", axum::routing::get(api::v1::credential::index))
+                .route("/:id", axum::routing::delete(api::v1::credential::delete)),
+        );
 
     let app = Router::new()
         .nest("/api", Router::new().nest("/v1", apiv1))
