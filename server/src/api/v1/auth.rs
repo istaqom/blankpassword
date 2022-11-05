@@ -102,7 +102,6 @@ pub async fn change_password(
     user: crate::entity::user::Model,
     Json(request): Json<ChangePasswordRequest>,
 ) -> Result<(), Error> {
-    println!("{:?} {:?}", request, user);
     if !verify_password(&request.old_password, &user.password) {
         return Err(Error::Unauthorized(UnauthorizedType::WrongPassword));
     }
@@ -160,7 +159,6 @@ mod tests {
             password: bootstrap.user_password(),
         };
 
-        println!("{:?}", req);
         let Json(session) = login(bootstrap.db(), Json(req.clone())).await.unwrap();
 
         assert!(matches!(
