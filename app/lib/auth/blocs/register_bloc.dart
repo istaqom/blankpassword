@@ -29,7 +29,8 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     emit(
       state.copyWith(
         username: username,
-        status: Formz.validate([state.password, username]),
+        status: Formz.validate(
+            [state.username, state.password, state.confirmPassword]),
       ),
     );
   }
@@ -39,10 +40,15 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     Emitter<RegisterState> emit,
   ) {
     final password = Password.dirty(event.password);
+    final confirmPassword = ConfirmPassword.dirty(
+      password,
+      state.confirmPassword.value,
+    );
+
     emit(
       state.copyWith(
         password: password,
-        status: Formz.validate([password, state.username]),
+        status: Formz.validate([state.username, password, confirmPassword]),
       ),
     );
   }
@@ -59,7 +65,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       state.copyWith(
         confirmPassword: confirmPassword,
         status: Formz.validate(
-          [confirmPassword, state.username],
+          [state.username, state.password, confirmPassword],
         ),
       ),
     );
