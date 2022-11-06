@@ -28,8 +28,11 @@ class ApiAuthenticationRepository extends AuthenticationRepository {
   final http.Client client;
   final String url;
   final ApiAuthenticationInterceptor interceptor;
-  ApiAuthenticationRepository(
-      {required this.client, required this.url, required this.interceptor});
+  ApiAuthenticationRepository({
+    required this.client,
+    required this.url,
+    required this.interceptor,
+  });
 
   @override
   void dispose() {
@@ -51,7 +54,7 @@ class ApiAuthenticationRepository extends AuthenticationRepository {
         },
       );
 
-      return handleResponse(response);
+      return handleAuth(response);
     } catch (e) {
       throw e;
     }
@@ -76,21 +79,26 @@ class ApiAuthenticationRepository extends AuthenticationRepository {
         },
       );
 
-      return handleResponse(response);
+      return handleAuth(response);
     } catch (e) {
       throw e;
     }
   }
 
-  void handleResponse(http.Response response) {
-    Map<String, dynamic> body = json.decode(response.body);
+  void handleAuth(http.Response response) {
+    var body = handleResponse(response);
 
-    if (body.containsKey("session")) {
-      interceptor.session = body['session'];
-      _controller.add(AuthenticationStatus.authenticated);
-    } else if (body.containsKey('message')) {
+    interceptor.session = body['data']['session'];
+    _controller.add(AuthenticationStatus.authenticated);
+  }
+
+  Map<dynamic, dynamic> handleResponse(http.Response response) {
+    Map<dynamic, dynamic> body = json.decode(response.body);
+    if (body.containsKey('message')) {
       throw body['message'];
     }
+
+    return body;
   }
 
   @override

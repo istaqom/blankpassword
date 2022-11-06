@@ -83,13 +83,9 @@ impl IntoResponse for Error {
     fn into_response(self) -> axum::response::Response {
         let status = match self {
             Self::Unauthorized(..) => StatusCode::UNAUTHORIZED,
-            Self::ValidationError(..) | Self::MustUniqueError(..) => {
-                StatusCode::UNPROCESSABLE_ENTITY
-            }
+            Self::ValidationError(..) | Self::MustUniqueError(..) => StatusCode::UNPROCESSABLE_ENTITY,
             Self::NotFound(..) => StatusCode::NOT_FOUND,
-            Self::PasswordHashError(..) | Self::DatabaseError(..) => {
-                StatusCode::INTERNAL_SERVER_ERROR
-            }
+            Self::PasswordHashError(..) | Self::DatabaseError(..) => StatusCode::INTERNAL_SERVER_ERROR,
             Self::CustomStatus(code, ..) => code,
         };
 
