@@ -1,7 +1,10 @@
 import 'package:api_authentication_repository/api_authentication_repository.dart';
+import 'package:api_credential_repository/api_credential_repository.dart';
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:blankpassword/auth.dart';
+import 'package:blankpassword/credential/blocs/credentials_bloc.dart';
 import 'package:blankpassword/password.dart';
+import 'package:credential_repository/credential_repository.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,16 +24,24 @@ void main() {
   http.Client httpClient = InterceptedClient.build(interceptors: [
     authenticationInterceptor,
   ]);
+
+  var url = "localhost:3000";
   var authenticationRepository = ApiAuthenticationRepository(
     client: httpClient,
-    url: "localhost:3000",
+    url: url,
     interceptor: authenticationInterceptor,
   );
+  var credentialRepository = ApiCredentialRepository(
+    client: httpClient,
+    url: url,
+  );
+
   var userRepository = UserRepository();
 
   runApp(MyApp(
     authenticationRepository: authenticationRepository,
     userRepository: userRepository,
+    credentialRepository: credentialRepository,
   ));
 }
 
@@ -55,16 +66,18 @@ MaterialColor buildMaterialColor(Color color) {
 }
 
 class MyApp extends StatefulWidget {
-  MyApp(
-      {super.key,
-      required this.authenticationRepository,
-      required this.userRepository})
-      : authenticationBloc = AuthenticationBloc(
+  MyApp({
+    super.key,
+    required this.authenticationRepository,
+    required this.userRepository,
+    required this.credentialRepository,
+  }) : authenticationBloc = AuthenticationBloc(
           authenticationRepository: authenticationRepository,
           userRepository: userRepository,
         );
 
   final AuthenticationRepository authenticationRepository;
+  final CredentialRepository credentialRepository;
   final UserRepository userRepository;
   final AuthenticationBloc authenticationBloc;
 
@@ -102,7 +115,22 @@ class _MyAppState extends State<MyApp> {
               case AuthenticationStatus.authenticated:
                 _navigator.pushAndRemoveUntil<void>(
                   MaterialPageRoute(
-                    builder: (_) =>  YourPasswordHomePageWidget(authenticationRepository: widget.authenticationRepository,),
+                    builder: (context) => BlocProvider(
+                      create: (_) => CredentialsBloc(
+                        credentialRepository: widget.credentialRepository,
+                      ),
+                      child: BlocBuilder<CredentialsBloc, CredentialsState>(
+                        builder: (context, state) {
+                          return YourPasswordHomePageWidget(
+                            authenticationRepository:
+                                widget.authenticationRepository,
+                            credentialRepository: widget.credentialRepository,
+                            bloc: BlocProvider.of(context),
+                          );
+                          //
+                        },
+                      ),
+                    ),
                   ),
                   (route) => false,
                 );

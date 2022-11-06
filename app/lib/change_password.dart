@@ -25,46 +25,36 @@ class _ChangePasswordState extends State<ChangePassword> {
       ),
       body: AppContainer(
         child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            children: [
-              Expanded(
-                child: ListView(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: PasswordField(
-                        labelText: "Old Password",
-                        controller: oldpassword
-                      )
-                    ),
-                    const Padding(padding: EdgeInsets.all(2)),
-                    const Divider(height: 2, thickness: 2),
-                    const Padding(padding: EdgeInsets.all(2)),
-                    Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: PasswordField(
-                        labelText: "New Password",
-                        controller: newpassword
-                      )
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: PasswordField(
-                        labelText: "Confirm New Password",
-                        controller: confirmnew
-                      )
-                    ),
-                  ],
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView(
+                    children: <Widget>[
+                      Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: PasswordField(
+                              labelText: "Old Password",
+                              controller: oldpassword)),
+                      const Padding(padding: EdgeInsets.all(2)),
+                      const Divider(height: 2, thickness: 2),
+                      const Padding(padding: EdgeInsets.all(2)),
+                      Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: PasswordField(
+                              labelText: "New Password",
+                              controller: newpassword)),
+                      Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: PasswordField(
+                              labelText: "Confirm New Password",
+                              controller: confirmnew)),
+                    ],
+                  ),
                 ),
-              ),
-              ElevatedButton(
-                onPressed: () {}, 
-                child: const Text("save")
-              )
-            ],
-          )
-        ),
+                ElevatedButton(onPressed: () {}, child: const Text("save"))
+              ],
+            )),
       ),
     );
   }

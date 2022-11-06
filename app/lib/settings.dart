@@ -33,12 +33,11 @@ class _AccountSettingsState extends State<AccountSettings> {
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.push(
-                      context, 
-                      MaterialPageRoute(
-                        builder: (context) => const ChangePassword(),
-                      )
-                    );
-                  }, 
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ChangePassword(),
+                        ));
+                  },
                   child: Row(
                     children: [
                       Icon(Icons.tune),
@@ -55,7 +54,7 @@ class _AccountSettingsState extends State<AccountSettings> {
                 child: ElevatedButton(
                   onPressed: () async {
                     await widget.authenticationRepository.logOut();
-                  }, 
+                  },
                   child: Row(
                     children: [
                       Icon(Icons.logout),

@@ -40,6 +40,6 @@ class ConfirmPassword
 // class EqualInput extends FormzInput<String, EqualError> {
 //   @override
 //   EqualError? validator(String? value) {
-//     return password.value == confirmPassword.value ? 
+//     return password.value == confirmPassword.value ?
 //   }
 // }

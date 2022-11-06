@@ -8,6 +8,13 @@ packages:
       relative: true
     source: path
     version: "1.0.0"
+  api_credential_repository:
+    dependency: "direct main"
+    description:
+      path: "packages/api_credential_repository"
+      relative: true
+    source: path
+    version: "1.0.0"
   archive:
     dependency: transitive
     description:
@@ -79,12 +86,19 @@ packages:
     source: hosted
     version: "1.1.1"
   collection:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: collection
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.16.0"
+  credential_repository:
+    dependency: "direct main"
+    description:
+      path: "packages/credential_repository"
+      relative: true
+    source: path
+    version: "1.0.0"
   crypto:
     dependency: transitive
     description:
