@@ -11,25 +11,27 @@ use crate::{
     user::UserUuid,
 };
 
-#[derive(Serialize, Deserialize)]
+use super::{JsonFlattenSuccess, JsonSuccess};
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct CredentialRequest {
     name: String,
     data: serde_json::Value,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct CredentialResponse {
     uuid: Uuid,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Credential {
     id: Uuid,
     name: String,
     data: serde_json::Value,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct IndexResponse {
     data: Vec<Credential>,
 }
@@ -38,7 +40,7 @@ pub async fn store(
     Extension(db): Extension<DatabaseConnection>,
     UserUuid(user_id): UserUuid,
     Json(request): Json<CredentialRequest>,
-) -> Result<Json<CredentialResponse>, Error> {
+) -> Result<JsonSuccess<CredentialResponse>, Error> {
     let uuid = Uuid::new_v4();
 
     credential::Entity::insert(credential::ActiveModel {
@@ -50,13 +52,13 @@ pub async fn store(
     .exec(&db)
     .await?;
 
-    Ok(Json(CredentialResponse { uuid }))
+    Ok(JsonSuccess(CredentialResponse { uuid }))
 }
 
 pub async fn index(
     Extension(db): Extension<DatabaseConnection>,
     UserUuid(user_id): UserUuid,
-) -> Result<Json<IndexResponse>, Error> {
+) -> Result<JsonFlattenSuccess<IndexResponse>, Error> {
     let credentials = credential::Entity::find()
         .filter(credential::Column::UserId.eq(user_id))
         .all(&db)
@@ -69,14 +71,14 @@ pub async fn index(
         })
         .collect();
 
-    Ok(Json(IndexResponse { data: credentials }))
+    Ok(JsonFlattenSuccess(IndexResponse { data: credentials }))
 }
 
 pub async fn delete(
     Extension(db): Extension<DatabaseConnection>,
     UserUuid(user_id): UserUuid,
     Path(id): Path<Uuid>,
-) -> Result<Json<()>, Error> {
+) -> Result<JsonSuccess<()>, Error> {
     let model = credential::Entity::find_by_id(id)
         .filter(credential::Column::UserId.eq(user_id))
         .count(&db)
@@ -84,7 +86,7 @@ pub async fn delete(
 
     if model > 0 {
         credential::Entity::delete_by_id(id).exec(&db).await?;
-        Ok(Json(()))
+        Ok(JsonSuccess(()))
     } else {
         Err(Error::Unauthorized(UnauthorizedType::NoPermission))
     }
@@ -92,6 +94,8 @@ pub async fn delete(
 
 #[cfg(test)]
 mod tests {
+
+    use crate::api::v1::JsonFlattenSuccess;
 
     use axum::{extract::Path, Json};
 
@@ -117,7 +121,7 @@ mod tests {
 
         let get_data = || super::index(bootstrap.db(), bootstrap.uuid());
 
-        let Json(response) = get_data().await.unwrap();
+        let JsonFlattenSuccess(response) = get_data().await.unwrap();
         assert_eq!(response.data.len(), 1);
 
         super::delete(
@@ -127,14 +131,14 @@ mod tests {
         )
         .await
         .expect_err("different user");
-        let Json(response) = get_data().await.unwrap();
+        let JsonFlattenSuccess(response) = get_data().await.unwrap();
         assert_eq!(response.data.len(), 1);
 
         super::delete(bootstrap.db(), bootstrap.uuid(), Path(response.data[0].id))
             .await
             .unwrap();
 
-        let Json(response) = super::index(bootstrap.db(), bootstrap.uuid())
+        let JsonFlattenSuccess(response) = super::index(bootstrap.db(), bootstrap.uuid())
             .await
             .unwrap();
         assert_eq!(response.data.len(), 0);

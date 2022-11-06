@@ -14,6 +14,8 @@ use crate::error::{Error, UnauthorizedType};
 use crate::session::generate_session;
 use crate::user::User;
 
+use super::JsonSuccess;
+
 #[derive(Debug, Serialize, Deserialize, Validate, Clone)]
 pub struct AuthRequest {
     #[validate(email)]
@@ -30,7 +32,7 @@ pub struct LoginResponse {
 pub async fn login(
     Extension(db): Extension<DatabaseConnection>,
     Json(auth): Json<AuthRequest>,
-) -> Result<Json<LoginResponse>, Error> {
+) -> Result<JsonSuccess<LoginResponse>, Error> {
     auth.validate()?;
 
     let user = user::Entity::find()
@@ -49,7 +51,7 @@ pub async fn login(
 
     if verify_password(&auth.password, &user.password) {
         let session = generate_session(&db, user.id).await?;
-        Ok(Json(LoginResponse { session }))
+        Ok(JsonSuccess(LoginResponse { session }))
     } else {
         Err(Error::Unauthorized(
             UnauthorizedType::WrongUsernameOrPassword,
@@ -57,14 +59,14 @@ pub async fn login(
     }
 }
 
-pub async fn profile(user: User) -> Json<User> {
-    Json(user)
+pub async fn profile(user: User) -> JsonSuccess<User> {
+    JsonSuccess(user)
 }
 
 pub async fn register(
     Extension(db): Extension<DatabaseConnection>,
     Json(auth): Json<AuthRequest>,
-) -> Result<Json<LoginResponse>, Error> {
+) -> Result<JsonSuccess<LoginResponse>, Error> {
     auth.validate()?;
 
     let count = user::Entity::find()
@@ -88,7 +90,7 @@ pub async fn register(
 
     let session = generate_session(&db, uuid).await?;
 
-    Ok(Json(LoginResponse { session }))
+    Ok(JsonSuccess(LoginResponse { session }))
 }
 
 #[derive(Debug, Serialize, Deserialize, Validate, Clone)]
@@ -101,7 +103,7 @@ pub async fn change_password(
     Extension(db): Extension<DatabaseConnection>,
     user: crate::entity::user::Model,
     Json(request): Json<ChangePasswordRequest>,
-) -> Result<(), Error> {
+) -> Result<JsonSuccess<()>, Error> {
     if !verify_password(&request.old_password, &user.password) {
         return Err(Error::Unauthorized(UnauthorizedType::WrongPassword));
     }
@@ -113,7 +115,7 @@ pub async fn change_password(
     };
     user::Entity::update(model).exec(&db).await?;
 
-    Ok(())
+    Ok(JsonSuccess(()))
 }
 
 fn verify_password(password: &str, hashed: &str) -> bool {
@@ -159,7 +161,7 @@ mod tests {
             password: bootstrap.user_password(),
         };
 
-        let Json(session) = login(bootstrap.db(), Json(req.clone())).await.unwrap();
+        let JsonSuccess(session) = login(bootstrap.db(), Json(req.clone())).await.unwrap();
 
         assert!(matches!(
             login(
@@ -179,8 +181,8 @@ mod tests {
             bearer: axum_auth::AuthBearer(session.session),
         };
 
-        let Json(user) = profile(
-            crate::user::User::from_session(&bootstrap.connection(), session)
+        let JsonSuccess(user) = profile(
+            crate::user::User::from_session(bootstrap.connection(), session)
                 .await
                 .unwrap(),
         )
