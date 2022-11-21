@@ -46,6 +46,7 @@ async fn main() {
             Router::new()
                 .route("/", axum::routing::post(api::v1::credential::store))
                 .route("/", axum::routing::get(api::v1::credential::index))
+                .route("/:id", axum::routing::get(api::v1::credential::update))
                 .route("/:id", axum::routing::delete(api::v1::credential::delete)),
         );
 

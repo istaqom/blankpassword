@@ -19,6 +19,21 @@ pub struct CredentialRequest {
     data: serde_json::Value,
 }
 
+impl CredentialRequest {
+    pub fn into_active_model(
+        &self,
+        id: ActiveValue<Uuid>,
+        user_id: ActiveValue<Uuid>,
+    ) -> credential::ActiveModel {
+        credential::ActiveModel {
+            id,
+            user_id,
+            name: ActiveValue::Set(self.name.clone()),
+            data: ActiveValue::Set(self.data.clone()),
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct CredentialResponse {
     uuid: Uuid,
@@ -43,12 +58,9 @@ pub async fn store(
 ) -> Result<JsonSuccess<CredentialResponse>, Error> {
     let uuid = Uuid::new_v4();
 
-    credential::Entity::insert(credential::ActiveModel {
-        id: ActiveValue::Set(uuid),
-        user_id: ActiveValue::Set(user_id),
-        name: ActiveValue::Set(request.name),
-        data: ActiveValue::Set(request.data),
-    })
+    credential::Entity::insert(
+        request.into_active_model(ActiveValue::Set(uuid), ActiveValue::Set(user_id)),
+    )
     .exec(&db)
     .await?;
 
@@ -74,22 +86,41 @@ pub async fn index(
     Ok(JsonFlattenSuccess(IndexResponse { data: credentials }))
 }
 
+pub async fn check_own(db: &DatabaseConnection, user_id: Uuid, id: Uuid) -> Result<(), Error> {
+    let model = credential::Entity::find_by_id(id)
+        .filter(credential::Column::UserId.eq(user_id))
+        .count(db)
+        .await?;
+
+    if model > 0 {
+        Ok(())
+    } else {
+        Err(Error::Unauthorized(UnauthorizedType::NoPermission))
+    }
+}
+
 pub async fn delete(
     Extension(db): Extension<DatabaseConnection>,
     UserUuid(user_id): UserUuid,
     Path(id): Path<Uuid>,
 ) -> Result<JsonSuccess<()>, Error> {
-    let model = credential::Entity::find_by_id(id)
-        .filter(credential::Column::UserId.eq(user_id))
-        .count(&db)
-        .await?;
+    check_own(&db, user_id, id).await?;
+    credential::Entity::delete_by_id(id).exec(&db).await?;
+    Ok(JsonSuccess(()))
+}
 
-    if model > 0 {
-        credential::Entity::delete_by_id(id).exec(&db).await?;
-        Ok(JsonSuccess(()))
-    } else {
-        Err(Error::Unauthorized(UnauthorizedType::NoPermission))
-    }
+pub async fn update(
+    Extension(db): Extension<DatabaseConnection>,
+    UserUuid(user_id): UserUuid,
+    Path(id): Path<Uuid>,
+    Json(request): Json<CredentialRequest>,
+) -> Result<JsonSuccess<()>, Error> {
+    check_own(&db, user_id, id).await?;
+    credential::Entity::update(request.into_active_model(ActiveValue::NotSet, ActiveValue::NotSet))
+        .filter(credential::Column::Id.eq(id))
+        .exec(&db)
+        .await?;
+    Ok(JsonSuccess(()))
 }
 
 #[cfg(test)]
