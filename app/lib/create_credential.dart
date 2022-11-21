@@ -28,10 +28,13 @@ class _CreateCredentialWidgetState extends State<CreateCredentialWidget> {
         actions: [
           ElevatedButton(
             onPressed: () async {
-              Navigator.pop(
-                context,
-                formKey.currentState!.toCredential(),
-              );
+              var state = formKey.currentState;
+              if (state != null) {
+                Navigator.pop(
+                  context,
+                  state.toCredential()
+                );
+              }
             },
             style: ElevatedButton.styleFrom(
               elevation: 0,

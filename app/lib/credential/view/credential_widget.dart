@@ -67,9 +67,13 @@ class CredentialFormWidget extends StatelessWidget {
                   return AppContainer(
                     child: Padding(
                       padding: const EdgeInsets.all(20.0),
-                      child: CredentialInputWidget(
-                        bloc: bloc,
-                        readOnly: readOnly,
+                      child: ListView(
+                        children: [
+                          CredentialInputWidget(
+                            bloc: bloc,
+                            readOnly: readOnly,
+                          ),
+                        ],
                       ),
                     ),
                   );
@@ -154,7 +158,7 @@ class CredentialWidget extends StatelessWidget {
           body: AppContainer(
             child: Padding(
               padding: const EdgeInsets.all(20.0),
-              child: Column(
+              child: ListView(
                 children: [
                   CredentialInputWidget(
                     key: ObjectKey(credential),
