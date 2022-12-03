@@ -36,7 +36,7 @@ impl CredentialRequest {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct CredentialResponse {
-    uuid: Uuid,
+    id: Uuid,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -56,15 +56,15 @@ pub async fn store(
     UserUuid(user_id): UserUuid,
     Json(request): Json<CredentialRequest>,
 ) -> Result<JsonSuccess<CredentialResponse>, Error> {
-    let uuid = Uuid::new_v4();
+    let id = Uuid::new_v4();
 
     credential::Entity::insert(
-        request.into_active_model(ActiveValue::Set(uuid), ActiveValue::Set(user_id)),
+        request.into_active_model(ActiveValue::Set(id), ActiveValue::Set(user_id)),
     )
     .exec(&db)
     .await?;
 
-    Ok(JsonSuccess(CredentialResponse { uuid }))
+    Ok(JsonSuccess(CredentialResponse { id }))
 }
 
 pub async fn index(

@@ -77,7 +77,7 @@ impl FolderRequest {
 
 #[derive(Serialize, Debug)]
 pub struct FolderResponse {
-    uuid: Uuid,
+    id: Uuid,
 }
 
 pub async fn store(
@@ -85,29 +85,29 @@ pub async fn store(
     UserUuid(user_id): UserUuid,
     Json(request): Json<FolderRequest>,
 ) -> Result<JsonSuccess<FolderResponse>, Error> {
-    let uuid = Uuid::new_v4();
+    let id = Uuid::new_v4();
 
-    folder::Entity::insert(request.into_active_model(Set(uuid), Set(user_id)))
+    folder::Entity::insert(request.into_active_model(Set(id), Set(user_id)))
         .exec(&db)
         .await?;
 
-    Ok(JsonSuccess(FolderResponse { uuid }))
+    Ok(JsonSuccess(FolderResponse { id }))
 }
 
 pub async fn update(
     Extension(db): Extension<DatabaseConnection>,
     UserUuid(user_id): UserUuid,
-    Path(uuid): Path<Uuid>,
+    Path(id): Path<Uuid>,
     Json(request): Json<FolderRequest>,
-) -> Result<JsonSuccess<FolderResponse>, Error> {
-    check_own(&db, user_id, uuid).await?;
+) -> Result<JsonSuccess<()>, Error> {
+    check_own(&db, user_id, id).await?;
 
     request
-        .into_active_model(Set(uuid), ActiveValue::NotSet)
+        .into_active_model(Set(id), ActiveValue::NotSet)
         .update(&db)
         .await?;
 
-    Ok(JsonSuccess(FolderResponse { uuid }))
+    Ok(JsonSuccess(()))
 }
 
 pub async fn delete(
@@ -150,7 +150,7 @@ mod tests {
         let response = get_data().await.unwrap();
         assert_eq!(response.folders.len(), 1);
         assert_eq!(response.folders[0].name, data.name);
-        assert_eq!(response.folders[0].id, store_response.uuid);
+        assert_eq!(response.folders[0].id, store_response.id);
 
         let data = FolderRequest {
             name: "tset".to_string(),
@@ -159,7 +159,7 @@ mod tests {
         super::update(
             bootstrap.db(),
             bootstrap.uuid(),
-            Path(store_response.uuid),
+            Path(store_response.id),
             Json(data.clone()),
         )
         .await
@@ -168,13 +168,13 @@ mod tests {
         let response = get_data().await.unwrap();
         assert_eq!(response.folders.len(), 1);
         assert_eq!(response.folders[0].name, data.name);
-        assert_eq!(response.folders[0].id, store_response.uuid);
+        assert_eq!(response.folders[0].id, store_response.id);
 
         let other_user = bootstrap.derive("example2@example.com", "password").await;
         super::update(
             other_user.db(),
             other_user.uuid(),
-            Path(store_response.uuid),
+            Path(store_response.id),
             Json(data.clone()),
         )
         .await
@@ -183,7 +183,7 @@ mod tests {
         super::delete(
             other_user.db(),
             other_user.uuid(),
-            Path(store_response.uuid),
+            Path(store_response.id),
         )
         .await
         .expect_err("different user");
@@ -191,7 +191,7 @@ mod tests {
         let response = get_data().await.unwrap();
         assert_eq!(response.folders.len(), 1);
 
-        super::delete(bootstrap.db(), bootstrap.uuid(), Path(store_response.uuid))
+        super::delete(bootstrap.db(), bootstrap.uuid(), Path(store_response.id))
             .await
             .unwrap();
 
