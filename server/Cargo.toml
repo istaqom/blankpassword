@@ -29,12 +29,15 @@ tower-http = { version = '0.3.4', features = ['trace'] }
 version = "0.10.0"
 features = [
     "runtime-tokio-native-tls",
+    "sqlx-postgres",
+    "sqlx-sqlite",
+    "sqlx-mysql",
 ]
 
 [dev-dependencies]
 migration = { version = "0.1", path = "./migration" }
 
-[features]
-sqlx-postgres = ["sea-orm/sqlx-postgres"]
-sqlx-sqlite = ["sea-orm/sqlx-sqlite"]
-sqlx-mysql = ["sea-orm/sqlx-mysql"]
+# [features]
+# sqlx-postgres = ["sea-orm/sqlx-postgres"]
+# sqlx-sqlite = ["sea-orm/sqlx-sqlite"]
+# sqlx-mysql = ["sea-orm/sqlx-mysql"]
