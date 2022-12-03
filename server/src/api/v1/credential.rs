@@ -1,7 +1,7 @@
 use axum::{extract::Path, Extension, Json};
 use sea_orm::{
-    prelude::Uuid, ActiveValue, ColumnTrait, DatabaseConnection, EntityTrait, PaginatorTrait,
-    QueryFilter,
+    prelude::Uuid, ActiveModelTrait, ActiveValue, ColumnTrait, DatabaseConnection, EntityTrait,
+    PaginatorTrait, QueryFilter,
 };
 use serde::{Deserialize, Serialize};
 
@@ -13,7 +13,7 @@ use crate::{
 
 use super::{JsonFlattenSuccess, JsonSuccess};
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct CredentialRequest {
     name: String,
     data: serde_json::Value,
@@ -116,17 +116,18 @@ pub async fn update(
     Json(request): Json<CredentialRequest>,
 ) -> Result<JsonSuccess<()>, Error> {
     check_own(&db, user_id, id).await?;
-    credential::Entity::update(request.into_active_model(ActiveValue::NotSet, ActiveValue::NotSet))
-        .filter(credential::Column::Id.eq(id))
-        .exec(&db)
+    request
+        .into_active_model(ActiveValue::Set(id), ActiveValue::NotSet)
+        .update(&db)
         .await?;
+
     Ok(JsonSuccess(()))
 }
 
 #[cfg(test)]
 mod tests {
 
-    use crate::api::v1::JsonFlattenSuccess;
+    use crate::api::v1::{tests::Bootstrap, JsonFlattenSuccess};
 
     use axum::{extract::Path, Json};
 
@@ -134,26 +135,49 @@ mod tests {
     async fn test() {
         let bootstrap = super::super::tests::bootstrap().await;
 
-        super::store(
+        let data = super::CredentialRequest {
+            name: "yiha".to_string(),
+            data: serde_json::json!({
+                "user": "email",
+                "password": "password",
+            }),
+        };
+
+        super::store(bootstrap.db(), bootstrap.uuid(), Json(data.clone()))
+            .await
+            .unwrap();
+
+        let other_user = bootstrap.derive("example2@example.com", "password").await;
+
+        let get_data = |a: &Bootstrap| super::index(a.db(), a.uuid());
+        let get_data_bootstrap = || get_data(&bootstrap);
+
+        let JsonFlattenSuccess(response) = get_data_bootstrap().await.unwrap();
+        assert_eq!(response.data.len(), 1);
+        assert_eq!(response.data[0].name, data.name);
+        assert_eq!(response.data[0].data, data.data);
+
+        let data = super::CredentialRequest {
+            name: "hayi".to_string(),
+            data: serde_json::json!({
+                "email": "user",
+                "password": "password"
+            }),
+        };
+
+        super::update(
             bootstrap.db(),
             bootstrap.uuid(),
-            Json(super::CredentialRequest {
-                name: "yiha".to_string(),
-                data: serde_json::json!({
-                    "user": "email",
-                    "password": "password",
-                }),
-            }),
+            Path(response.data[0].id),
+            Json(data.clone()),
         )
         .await
         .unwrap();
 
-        let other_user = bootstrap.derive("example2@example.com", "password").await;
-
-        let get_data = || super::index(bootstrap.db(), bootstrap.uuid());
-
-        let JsonFlattenSuccess(response) = get_data().await.unwrap();
+        let JsonFlattenSuccess(response) = get_data_bootstrap().await.unwrap();
         assert_eq!(response.data.len(), 1);
+        assert_eq!(response.data[0].name, data.name);
+        assert_eq!(response.data[0].data, data.data);
 
         super::delete(
             other_user.db(),
@@ -162,7 +186,7 @@ mod tests {
         )
         .await
         .expect_err("different user");
-        let JsonFlattenSuccess(response) = get_data().await.unwrap();
+        let JsonFlattenSuccess(response) = get_data_bootstrap().await.unwrap();
         assert_eq!(response.data.len(), 1);
 
         super::delete(bootstrap.db(), bootstrap.uuid(), Path(response.data[0].id))
