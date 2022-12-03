@@ -179,6 +179,15 @@ mod tests {
         assert_eq!(response.data[0].name, data.name);
         assert_eq!(response.data[0].data, data.data);
 
+        super::update(
+            other_user.db(),
+            other_user.uuid(),
+            Path(response.data[0].id),
+            Json(data.clone()),
+        )
+        .await
+        .expect_err("different user");
+
         super::delete(
             other_user.db(),
             other_user.uuid(),

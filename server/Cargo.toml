@@ -25,6 +25,7 @@ dotenvy = "0.15"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 tower-http = { version = '0.3.4', features = ['trace'] }
+migration = { version = "0.1", path = "./migration" }
 [dependencies.sea-orm]
 version = "0.10.0"
 features = [
@@ -35,7 +36,6 @@ features = [
 ]
 
 [dev-dependencies]
-migration = { version = "0.1", path = "./migration" }
 
 # [features]
 # sqlx-postgres = ["sea-orm/sqlx-postgres"]
