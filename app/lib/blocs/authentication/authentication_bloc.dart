@@ -10,10 +10,10 @@ part "authentication_event.dart";
 
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
-  AuthenticationBloc(
-      {required AuthenticationRepository authenticationRepository,
-      required UserRepository userRepository})
-      : _authenticationRepository = authenticationRepository,
+  AuthenticationBloc({
+    required AuthenticationRepository authenticationRepository,
+    required UserRepository userRepository,
+  })  : _authenticationRepository = authenticationRepository,
         _userRepository = userRepository,
         super(const AuthenticationState.unkown()) {
     on<AuthenticationStatusChanged>(_onAuthenticationStatusChanged);
@@ -34,8 +34,10 @@ class AuthenticationBloc
     return super.close();
   }
 
-  Future<void> _onAuthenticationStatusChanged(AuthenticationStatusChanged event,
-      Emitter<AuthenticationState> emit) async {
+  Future<void> _onAuthenticationStatusChanged(
+    AuthenticationStatusChanged event,
+    Emitter<AuthenticationState> emit,
+  ) async {
     switch (event.status) {
       case AuthenticationStatus.unauthenticated:
         return emit(const AuthenticationState.unkown());
@@ -59,7 +61,9 @@ class AuthenticationBloc
   }
 
   void _onAuthenticationLogoutRequested(
-      AuthenticationLogoutRequested event, Emitter<AuthenticationState> emit) {
+    AuthenticationLogoutRequested event,
+    Emitter<AuthenticationState> emit,
+  ) {
     _authenticationRepository.logOut();
   }
 }
