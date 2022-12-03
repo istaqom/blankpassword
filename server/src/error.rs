@@ -53,6 +53,7 @@ pub struct ErrorJson {
     errors: Option<serde_json::Value>,
     r#type: String,
     message: String,
+    status: &'static str
 }
 
 impl From<Error> for ErrorJson {
@@ -75,6 +76,7 @@ impl From<Error> for ErrorJson {
             errors,
             message,
             r#type,
+            status: "error",
         }
     }
 }
