@@ -1,13 +1,10 @@
 import 'package:blankpassword/app.dart';
 import 'package:blankpassword/credential/blocs/credential_bloc.dart';
-import 'package:blankpassword/credential/blocs/credential_delete.dart';
 import 'package:blankpassword/credential/blocs/credential_form_bloc.dart';
 import 'package:blankpassword/credential/view/credential_input.dart';
-import 'package:credential_repository/credential_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
-import 'package:blankpassword/credential/blocs/credentials_bloc.dart';
 
 class CredentialFormWidget extends StatelessWidget {
   const CredentialFormWidget({
