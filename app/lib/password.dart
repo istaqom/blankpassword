@@ -1,4 +1,5 @@
 import 'package:authentication_repository/authentication_repository.dart';
+import 'package:blankpassword/credential/blocs/credential_bloc.dart';
 import 'package:blankpassword/credential/blocs/credentials_bloc.dart';
 import 'package:blankpassword/credential/blocs/credential_form_bloc.dart';
 import 'package:blankpassword/credential/view/credential_widget.dart';
@@ -18,6 +19,25 @@ class YourPasswordHomePageWidget extends StatefulWidget {
     required this.credentialRepository,
     required this.bloc,
   });
+
+  static Route<void> route({
+    required CredentialsBloc bloc,
+    required AuthenticationRepository authenticationRepository,
+    required CredentialRepository credentialRepository,
+  }) {
+    return MaterialPageRoute(
+      builder: (context) => BlocBuilder<CredentialsBloc, CredentialsState>(
+        bloc: bloc,
+        builder: (context, state) {
+          return YourPasswordHomePageWidget(
+            authenticationRepository: authenticationRepository,
+            credentialRepository: credentialRepository,
+            bloc: bloc,
+          );
+        },
+      ),
+    );
+  }
 
   final AuthenticationRepository authenticationRepository;
   final CredentialsBloc bloc;
@@ -83,9 +103,10 @@ class _YourPasswordHomePageWidgetState
             children: <Widget>[
               OutlinedButton(
                 style: OutlinedButton.styleFrom(
-                    side: const BorderSide(
-                  color: Colors.transparent,
-                )),
+                  side: const BorderSide(
+                    color: Colors.transparent,
+                  ),
+                ),
                 onPressed: () {},
                 child: Row(
                   children: [
@@ -94,12 +115,15 @@ class _YourPasswordHomePageWidgetState
                       size: 50,
                       color: Theme.of(context).primaryColor,
                     ),
-                    const Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Text(
-                        "Create New Folder",
-                        style: TextStyle(
-                          color: Colors.white,
+                    const Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 10),
+                        child: Text(
+                          "Create New Folder",
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     )
@@ -131,11 +155,14 @@ class _YourPasswordHomePageWidgetState
                     size: 50,
                     color: Theme.of(context).primaryColor,
                   ),
-                  const Padding(
-                    padding: EdgeInsets.only(left: 10.0),
-                    child: Text(
-                      "Sosmed",
-                      style: TextStyle(color: Colors.white),
+                  const Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 10.0),
+                      child: Text(
+                        "Sosmed",
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ),
                 ]),
@@ -208,9 +235,10 @@ class _YourPasswordFolderWidgetState extends State<YourPasswordFolderWidget> {
                 children: <Widget>[
                   OutlinedButton(
                     style: OutlinedButton.styleFrom(
-                        side: const BorderSide(
-                      color: Colors.transparent,
-                    )),
+                      side: const BorderSide(
+                        color: Colors.transparent,
+                      ),
+                    ),
                     onPressed: () {},
                     child: Row(
                       children: const [
@@ -218,12 +246,14 @@ class _YourPasswordFolderWidgetState extends State<YourPasswordFolderWidget> {
                           Icons.folder,
                           size: 50,
                         ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 10.0),
-                          child: Text(
-                            "Sosmed",
-                            style: TextStyle(
-                              color: Colors.white,
+                        Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 10.0),
+                            child: Text(
+                              "Sosmed",
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
@@ -238,6 +268,21 @@ class _YourPasswordFolderWidgetState extends State<YourPasswordFolderWidget> {
                     builder: (context, state) {
                       return CredentialListWidget(
                         bloc: widget.bloc,
+                        onCredentialPressed: (item) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return CredentialWidget(
+                                  bloc: CredentialBloc(
+                                    credentialBloc: widget.bloc,
+                                    credential: item,
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        },
                       );
                     },
                   ),

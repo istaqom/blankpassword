@@ -2,10 +2,12 @@ import 'package:api_authentication_repository/api_authentication_repository.dart
 import 'package:api_credential_repository/api_credential_repository.dart';
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:blankpassword/auth.dart';
+import 'package:blankpassword/autofill.dart';
 import 'package:blankpassword/credential/blocs/credentials_bloc.dart';
 import 'package:blankpassword/password.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_autofill_service/flutter_autofill_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:blankpassword/blocs/authentication/authentication_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -13,7 +15,9 @@ import 'package:http_interceptor/http/http.dart';
 import 'package:user_repository/user_repository.dart';
 import 'package:http/http.dart' as http;
 
-void main() {
+void run({
+  required bool isAutofill,
+}) {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitDown,
@@ -46,7 +50,16 @@ void main() {
     authenticationRepository: apiAuthenticationRepository,
     userRepository: userRepository,
     credentialRepository: credentialRepository,
+    isAutofill: isAutofill,
   ));
+}
+
+void main() {
+  run(isAutofill: false);
+}
+
+void autofillEntryPoint() {
+  run(isAutofill: true);
 }
 
 MaterialColor buildMaterialColor(Color color) {
@@ -75,11 +88,13 @@ class MyApp extends StatefulWidget {
     required this.authenticationRepository,
     required this.userRepository,
     required this.credentialRepository,
+    required this.isAutofill,
   }) : authenticationBloc = AuthenticationBloc(
           authenticationRepository: authenticationRepository,
           userRepository: userRepository,
         );
 
+  final bool isAutofill;
   final ApiAuthenticationRepository authenticationRepository;
   final ApiCredentialRepository credentialRepository;
   final UserRepository userRepository;
@@ -96,6 +111,9 @@ class _MyAppState extends State<MyApp> {
 
   late Future loadFuture;
 
+  late bool isAutofill;
+  late Future? autofillFuture;
+
   NavigatorState get _navigator => _navigatorKey.currentState!;
 
   @override
@@ -110,6 +128,7 @@ class _MyAppState extends State<MyApp> {
       widget.credentialRepository.password = event;
     });
     loadFuture = _loadState();
+    autofillFuture = _loadAutofill();
     super.initState();
   }
 
@@ -126,6 +145,16 @@ class _MyAppState extends State<MyApp> {
     } catch (e) {
       //
     }
+  }
+
+  Future<bool> _loadAutofill() async {
+    var service = AutofillService();
+    if (await service.status() != AutofillServiceStatus.enabled) {
+      return false;
+    }
+
+    var metadata = await service.getAutofillMetadata();
+    return true;
   }
 
   @override
@@ -149,27 +178,29 @@ class _MyAppState extends State<MyApp> {
           listener: (context, state) {
             switch (state.status) {
               case AuthenticationStatus.authenticated:
-                _navigator.pushAndRemoveUntil<void>(
-                  MaterialPageRoute(
-                    builder: (context) => BlocProvider(
-                      create: (_) => CredentialsBloc(
+                if (!widget.isAutofill) {
+                  _navigator.pushAndRemoveUntil<void>(
+                    YourPasswordHomePageWidget.route(
+                      bloc: CredentialsBloc(
                         credentialRepository: widget.credentialRepository,
                       ),
-                      child: BlocBuilder<CredentialsBloc, CredentialsState>(
-                        builder: (context, state) {
-                          return YourPasswordHomePageWidget(
-                            authenticationRepository:
-                                widget.authenticationRepository,
-                            credentialRepository: widget.credentialRepository,
-                            bloc: BlocProvider.of(context),
-                          );
-                          //
-                        },
-                      ),
+                      authenticationRepository: widget.authenticationRepository,
+                      credentialRepository: widget.credentialRepository,
                     ),
-                  ),
-                  (route) => false,
-                );
+                    (route) => false,
+                  );
+                } else {
+                  _navigator.pushAndRemoveUntil<void>(
+                    AutofillPasswordWidget.route(
+                      bloc: CredentialsBloc(
+                        credentialRepository: widget.credentialRepository,
+                      ),
+                      authenticationRepository: widget.authenticationRepository,
+                      credentialRepository: widget.credentialRepository,
+                    ),
+                    (route) => false,
+                  );
+                }
                 break;
               default:
                 // case AuthenticationStatus.unauthenticated:

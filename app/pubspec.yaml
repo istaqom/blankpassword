@@ -44,6 +44,7 @@ dependencies:
   collection: ^1.16.0
 
   flutter_secure_storage: ^6.1.0
+  flutter_autofill_service: ^0.14.0
 
   user_repository:
     path: packages/user_repository

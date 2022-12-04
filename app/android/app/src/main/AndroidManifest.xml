@@ -1,5 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.blankpassword">
+    package="com.example.blankpassword"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
    <application
         android:label="blankpassword"
         android:name="${applicationName}"
@@ -25,6 +27,33 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".AutofillActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/LaunchTheme"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:hardwareAccelerated="true"
+            android:windowSoftInputMode="adjustResize"
+            android:exported="true">
+
+            <meta-data
+                android:name="io.flutter.embedding.android.NormalTheme"
+                android:resource="@style/NormalTheme"
+                />
+            <meta-data
+                android:name="flutterEmbedding"
+                android:value="2" />
+        </activity>
+
+        <meta-data android:name="com.keevault.flutter_autofill_service.ACTIVITY_NAME"
+            android:value="com.example.blankpassword.AutofillActivity" />
+        <service
+            android:name="com.keevault.flutter_autofill_service.FlutterAutofillService"
+            tools:replace="label"
+            android:label="Blankpassword">
+        </service>
+
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
