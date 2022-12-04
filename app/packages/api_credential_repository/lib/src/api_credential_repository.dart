@@ -1,9 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
-import 'dart:typed_data';
-
-import 'package:pointycastle/export.dart';
 import 'package:crypto/crypto.dart';
 import 'package:dargon2_flutter/dargon2_flutter.dart';
 import 'package:credential_repository/credential_repository.dart';
