@@ -102,7 +102,9 @@ class ApiCredentialRepository extends CredentialRepository {
   ApiCredentialRepository({
     required this.client,
     required this.url,
-  });
+  }) {
+    DArgon2Flutter.init();
+  }
 
   @override
   void dispose() {
