@@ -94,8 +94,11 @@ class ApiAuthenticationRepository extends AuthenticationRepository {
 
   Map<dynamic, dynamic> handleResponse(http.Response response) {
     Map<dynamic, dynamic> body = json.decode(response.body);
-    if (body.containsKey('message')) {
-      throw body['message'];
+    if (body["status"] == "error") {
+      if (body.containsKey("message")) {
+        throw body['message'];
+      }
+      throw response.body;
     }
 
     return body;
