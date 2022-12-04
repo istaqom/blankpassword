@@ -53,9 +53,7 @@ class CredentialsBloc extends Bloc<CredentialsEvent, CredentialsState> {
       credential = await _credentialRepository.create(credential);
 
       add(CredentialsCreated(credential));
-    } catch (e) {
-      // emit(state.copyWith())
-    }
+    } catch (e) {}
   }
 
   Future<void> update(Credential credential) async {
@@ -63,9 +61,7 @@ class CredentialsBloc extends Bloc<CredentialsEvent, CredentialsState> {
       credential = await _credentialRepository.update(credential);
 
       add(CredentialsUpdated(credential));
-    } catch (e) {
-      print(e);
-    }
+    } catch (e) {}
   }
 
   Future<void> reload() async {

@@ -1,5 +1,4 @@
 import 'package:authentication_repository/authentication_repository.dart';
-import 'package:blankpassword/create_credential.dart';
 import 'package:blankpassword/credential/blocs/credentials_bloc.dart';
 import 'package:blankpassword/credential/blocs/credential_form_bloc.dart';
 import 'package:blankpassword/credential/view/credential_widget.dart';
@@ -64,16 +63,17 @@ class _YourPasswordHomePageWidgetState
       body: AppContainerWithFloatingButton(
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            Credential? credential = await Navigator.push(
+            Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => const CreateCredentialWidget(),
+              CredentialFormWidget.route(
+                bloc: CredentialFormBloc(
+                  credentialRepository: CredentialCreateRepository(
+                    widget.bloc,
+                  ),
+                ),
+                title: const Text("Add Login Info"),
               ),
             );
-
-            if (credential != null) {
-              widget.bloc.create(credential);
-            }
           },
           child: const Icon(Icons.add),
         ),
@@ -179,21 +179,13 @@ class _YourPasswordFolderWidgetState extends State<YourPasswordFolderWidget> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => BlocProvider(
-                  create: (_) => CredentialFormBloc(
-                    credentialRepository: CredentialCreateRepository(
-                      widget.bloc,
-                    ),
-                  ),
-                  child: Builder(
-                    builder: (context) {
-                      return CredentialFormWidget(
-                        bloc: BlocProvider.of(context),
-                      );
-                    },
+              CredentialFormWidget.route(
+                bloc: CredentialFormBloc(
+                  credentialRepository: CredentialCreateRepository(
+                    widget.bloc,
                   ),
                 ),
+                title: const Text("Add Login Info"),
               ),
             );
           },

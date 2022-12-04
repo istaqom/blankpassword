@@ -39,8 +39,24 @@ class CredentialFormWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Builder(
-      builder: (context) {
+    return BlocConsumer<CredentialFormBloc, CredentialFormState>(
+      bloc: bloc,
+      listener: (context, state) {
+        if (state.status.isSubmissionSuccess) {
+          Navigator.pop(context, bloc.toCredential());
+        }
+
+        if (state.status.isSubmissionFailure) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(
+                content: Text(state.error ?? 'Unkown Error'),
+              ),
+            );
+        }
+      },
+      builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
             title: title,
@@ -61,38 +77,18 @@ class CredentialFormWidget extends StatelessWidget {
           ),
           body: Builder(
             builder: (context) {
-              return BlocConsumer<CredentialFormBloc, CredentialFormState>(
-                bloc: bloc,
-                builder: (context, state) {
-                  return AppContainer(
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: ListView(
-                        children: [
-                          CredentialInputWidget(
-                            bloc: bloc,
-                            readOnly: readOnly,
-                          ),
-                        ],
+              return AppContainer(
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: ListView(
+                    children: [
+                      CredentialInputWidget(
+                        bloc: bloc,
+                        readOnly: readOnly,
                       ),
-                    ),
-                  );
-                },
-                listener: (context, state) {
-                  if (state.status.isSubmissionSuccess) {
-                    Navigator.pop(context, bloc.toCredential());
-                  }
-
-                  if (state.status.isSubmissionFailure) {
-                    ScaffoldMessenger.of(context)
-                      ..hideCurrentSnackBar()
-                      ..showSnackBar(
-                        SnackBar(
-                          content: Text(state.error ?? 'Unkown Error'),
-                        ),
-                      );
-                  }
-                },
+                    ],
+                  ),
+                ),
               );
             },
           ),
