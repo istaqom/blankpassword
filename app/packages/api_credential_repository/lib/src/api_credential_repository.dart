@@ -144,7 +144,7 @@ class ApiCredentialRepository extends CredentialRepository {
 
     var json = handleResponse(response);
 
-    var c = credential.copyWith(id: json['data']['uuid']);
+    var c = credential.copyWith(id: json['data']['id']);
     this.credentials.add(c);
 
     return c;
