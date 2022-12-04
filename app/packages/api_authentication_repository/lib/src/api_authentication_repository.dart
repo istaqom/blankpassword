@@ -133,6 +133,7 @@ class ApiAuthenticationRepository extends AuthenticationRepository {
   @override
   Future<void> logOut() async {
     _controller.add(AuthenticationStatus.unauthenticated);
+    interceptor.session = null;
     _passwordController.add(null);
   }
 
