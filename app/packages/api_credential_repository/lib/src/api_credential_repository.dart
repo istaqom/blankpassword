@@ -161,9 +161,11 @@ class ApiCredentialRepository extends CredentialRepository {
       },
     );
 
+    print(response.body);
     handleResponse(response);
 
     var index = _getIndex(credential);
+    print("$index $credential");
     if (index != null) {
       credentials[index] = credential;
     }
@@ -195,6 +197,7 @@ class ApiCredentialRepository extends CredentialRepository {
       ),
     );
 
+    print(response.body);
     handleResponse(response);
 
     var index = _getIndex(credential);

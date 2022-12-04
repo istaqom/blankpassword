@@ -1,6 +1,7 @@
 import 'package:blankpassword/credential/blocs/credential_bloc.dart';
 import 'package:blankpassword/credential/blocs/credentials_bloc.dart';
 import 'package:blankpassword/credential/view/credential_widget.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:credential_repository/credential_repository.dart';
 import 'package:flutter/material.dart';
 
@@ -14,8 +15,24 @@ class CredentialListWidget extends StatelessWidget {
   final CredentialsBloc bloc;
   final void Function(Credential) onCredentialPressed;
 
+  String getFavicon(Credential item) {
+    for (var it in item.sites) {
+      try {
+        var uri = Uri.parse(it);
+        if (uri.hasScheme) {
+          return "${uri.host}/favicon.ico";
+        } else {
+          return "${Uri(scheme: "https", host: it)}/favicon.ico";
+        }
+      } catch (e) {}
+    }
+
+    return "localhost";
+  }
+
   @override
   Widget build(BuildContext context) {
+    print("building");
     return Column(
       children: [
         for (var item in bloc.state.credentials)
@@ -28,15 +45,21 @@ class CredentialListWidget extends StatelessWidget {
                 ),
               ),
               onPressed: () {
+                print("credential presseed");
                 onCredentialPressed(item);
               },
               child: Row(
                 children: [
-                  const Icon(
-                    Icons.web,
-                    color: Color(0xff472D2D),
-                    size: 50,
+                  CachedNetworkImage(
+                    imageUrl: getFavicon(item),
+                    errorWidget: (context, url, error) => const Icon(
+                      Icons.web,
+                      color: Color(0xff472D2D),
+                    ),
+                    height: 50,
+                    width: 50,
                   ),
+                  const Padding(padding: EdgeInsets.all(4)),
                   Expanded(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,

@@ -102,7 +102,7 @@ class CredentialWidget extends StatelessWidget {
   });
 
   final CredentialBloc bloc;
-  static const title = "Your LoginInfo";
+  static const title = "Your Login Info";
 
   @override
   Widget build(BuildContext context) {
