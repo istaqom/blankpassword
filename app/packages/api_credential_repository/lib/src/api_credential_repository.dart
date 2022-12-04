@@ -37,7 +37,8 @@ Future<String> credentialToJson(String? password, Credential credential) async {
     }).toList()
   };
 
-  var encrypter = await createEncrypter(password, credential.name);
+  var salt = sha256.convert(utf8.encode(credential.name)).toString();
+  var encrypter = await createEncrypter(password, salt);
 
   var iv = IV.fromSecureRandom(16);
 
@@ -47,7 +48,7 @@ Future<String> credentialToJson(String? password, Credential credential) async {
   return jsonEncode({
     "name": credential.name,
     "data": {
-      'salt': credential.name,
+      'salt': salt,
       "encrypted": d.base64,
       "iv": iv.base64,
       "v": 1,
