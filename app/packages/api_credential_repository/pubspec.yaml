@@ -10,9 +10,17 @@ publish_to: none
 dependencies:
   http: ^0.13.5
   http_interceptor: ^1.0.0
+  dargon2_flutter: ^3.1.0
+  encrypt: ^5.0.1
+  crypto: ^3.0.2
+  pointycastle: ^3.6.2
   credential_repository:
     path: ../credential_repository
 
 dev_dependencies:
   lints: ^2.0.0
   test: ^1.16.0
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter

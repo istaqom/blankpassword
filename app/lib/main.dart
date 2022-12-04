@@ -1,6 +1,7 @@
 import 'package:api_authentication_repository/api_authentication_repository.dart';
 import 'package:api_credential_repository/api_credential_repository.dart';
 import 'package:authentication_repository/authentication_repository.dart';
+import 'package:blankpassword/api_credential_repository_adapter.dart';
 import 'package:blankpassword/auth.dart';
 import 'package:blankpassword/credential/blocs/credentials_bloc.dart';
 import 'package:blankpassword/password.dart';
@@ -26,7 +27,8 @@ void main() {
   ]);
 
   var url = "localhost:3000";
-  var authenticationRepository = ApiAuthenticationRepository(
+  AuthenticationRepository authenticationRepository =
+      ApiAuthenticationRepository(
     client: httpClient,
     url: url,
     interceptor: authenticationInterceptor,
@@ -35,6 +37,10 @@ void main() {
     client: httpClient,
     url: url,
   );
+
+  authenticationRepository = AuthenticationRepositoryAdapter(
+      authentication: authenticationRepository,
+      credential: credentialRepository);
 
   var userRepository = UserRepository();
 

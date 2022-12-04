@@ -1,38 +1,96 @@
 import 'dart:async';
-import 'dart:collection';
 import 'dart:convert';
+import 'dart:math';
+import 'dart:typed_data';
 
+import 'package:pointycastle/export.dart';
+import 'package:crypto/crypto.dart';
+import 'package:dargon2_flutter/dargon2_flutter.dart';
 import 'package:credential_repository/credential_repository.dart';
+import 'package:encrypt/encrypt.dart';
 import 'package:http/http.dart' as http;
 
-String credentialToJson(Credential credential) {
+Future<Encrypter> createEncrypter(
+  String? password,
+  String salt,
+) async {
+  var s = Salt(utf8.encode(salt));
+
+  var result = await argon2.hashPasswordString(
+    "$salt-$password",
+    salt: s,
+  );
+
+  var stringKey = sha256.convert(result.rawBytes).toString();
+  var key = Key.fromBase16(stringKey);
+
+  return Encrypter(AES(key));
+}
+
+Future<String> credentialToJson(String? password, Credential credential) async {
+  var data = {
+    "username": credential.username,
+    "password": credential.password,
+    "notes": credential.notes,
+    "sites": credential.sites.map((it) {
+      return {"url": it};
+    }).toList()
+  };
+
+  var encrypter = await createEncrypter(password, credential.name);
+
+  var iv = IV.fromSecureRandom(16);
+
+  var jsonData = jsonEncode(data);
+  var d = encrypter.encrypt(jsonData, iv: iv);
+
   return jsonEncode({
     "name": credential.name,
     "data": {
-      "username": credential.username,
-      "password": credential.password,
-      "notes": credential.notes,
-      "sites": credential.sites.map((it) {
-        return {"url": it};
-      }).toList()
+      'salt': credential.name,
+      "encrypted": d.base64,
+      "iv": iv.base64,
+      "v": 1,
     }
   });
 }
 
-Credential credentialFromJson(dynamic credential) {
-  Map<dynamic, dynamic> json = credential;
-
-  Map<dynamic, dynamic> data = json['data'];
-
+Credential credentialFromEncrypted({
+  String? id,
+  required String name,
+  required dynamic data,
+}) {
   List<dynamic> sites = data['sites'];
 
   return Credential(
-    id: json['id'] ?? '',
-    name: json['name'],
+    id: id ?? '',
+    name: name,
     username: data['username'],
     password: data['password'],
     notes: data['notes'],
     sites: sites.map((it) => it['url'] as String).toList(),
+  );
+}
+
+Future<Credential> credentialFromJson(
+  String? password,
+  dynamic credential,
+) async {
+  Map<dynamic, dynamic> json = credential;
+
+  var encrypter = await createEncrypter(password, json['data']['salt']);
+
+  var dataString = encrypter.decrypt64(
+    json['data']['encrypted'],
+    iv: IV.fromBase64(json['data']['iv']),
+  );
+
+  var data = jsonDecode(dataString);
+
+  return credentialFromEncrypted(
+    id: json['id'],
+    name: json['name'],
+    data: data,
   );
 }
 
@@ -41,6 +99,8 @@ class ApiCredentialRepository extends CredentialRepository {
   final http.Client client;
   final String url;
   final List<Credential> credentials = [];
+
+  String? password = null;
 
   ApiCredentialRepository({
     required this.client,
@@ -75,7 +135,7 @@ class ApiCredentialRepository extends CredentialRepository {
   Future<Credential> create(Credential credential) async {
     var response = await client.post(
       Uri.http(url, 'api/v1/credential'),
-      body: credentialToJson(credential),
+      body: await credentialToJson(password, credential),
       headers: {
         "Content-Type": "application/json",
       },
@@ -96,7 +156,7 @@ class ApiCredentialRepository extends CredentialRepository {
         url,
         'api/v1/credential/${credential.id}',
       ),
-      body: credentialToJson(credential),
+      body: await credentialToJson(password, credential),
       headers: {
         "Content-Type": "application/json",
       },
@@ -120,7 +180,11 @@ class ApiCredentialRepository extends CredentialRepository {
 
     List<dynamic> credentials = json['data'];
     this.credentials.clear();
-    this.credentials.addAll(credentials.map((it) => credentialFromJson(it)));
+    this.credentials.addAll(
+          await Future.wait(credentials.map(
+            (it) => credentialFromJson(password, it),
+          )),
+        );
   }
 
   @override
