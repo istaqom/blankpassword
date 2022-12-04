@@ -1,15 +1,14 @@
 import 'package:api_authentication_repository/api_authentication_repository.dart';
 import 'package:api_credential_repository/api_credential_repository.dart';
 import 'package:authentication_repository/authentication_repository.dart';
-import 'package:blankpassword/api_credential_repository_adapter.dart';
 import 'package:blankpassword/auth.dart';
 import 'package:blankpassword/credential/blocs/credentials_bloc.dart';
 import 'package:blankpassword/password.dart';
-import 'package:credential_repository/credential_repository.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:blankpassword/blocs/authentication/authentication_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http_interceptor/http/http.dart';
 import 'package:user_repository/user_repository.dart';
 import 'package:http/http.dart' as http;
@@ -26,9 +25,8 @@ void main() {
     authenticationInterceptor,
   ]);
 
-  var url = "localhost:3000";
-  AuthenticationRepository authenticationRepository =
-      ApiAuthenticationRepository(
+  var url = "192.168.1.7:3000";
+  var apiAuthenticationRepository = ApiAuthenticationRepository(
     client: httpClient,
     url: url,
     interceptor: authenticationInterceptor,
@@ -38,14 +36,14 @@ void main() {
     url: url,
   );
 
-  authenticationRepository = AuthenticationRepositoryAdapter(
-      authentication: authenticationRepository,
-      credential: credentialRepository);
+  apiAuthenticationRepository.passwordStream.listen((password) {
+    credentialRepository.password = password;
+  });
 
   var userRepository = UserRepository();
 
   runApp(MyApp(
-    authenticationRepository: authenticationRepository,
+    authenticationRepository: apiAuthenticationRepository,
     userRepository: userRepository,
     credentialRepository: credentialRepository,
   ));
@@ -82,8 +80,8 @@ class MyApp extends StatefulWidget {
           userRepository: userRepository,
         );
 
-  final AuthenticationRepository authenticationRepository;
-  final CredentialRepository credentialRepository;
+  final ApiAuthenticationRepository authenticationRepository;
+  final ApiCredentialRepository credentialRepository;
   final UserRepository userRepository;
   final AuthenticationBloc authenticationBloc;
 
@@ -96,7 +94,39 @@ class _MyAppState extends State<MyApp> {
 
   final _navigatorKey = GlobalKey<NavigatorState>();
 
+  late Future loadFuture;
+
   NavigatorState get _navigator => _navigatorKey.currentState!;
+
+  @override
+  void initState() {
+    widget.authenticationRepository.passwordStream.listen((event) async {
+      var storage = const FlutterSecureStorage();
+      storage.write(key: "password", value: event);
+      storage.write(
+        key: "session",
+        value: widget.authenticationRepository.interceptor.session,
+      );
+      widget.credentialRepository.password = event;
+    });
+    loadFuture = _loadState();
+    super.initState();
+  }
+
+  Future<void> _loadState() async {
+    var storage = const FlutterSecureStorage();
+    String? password = await storage.read(key: "password");
+    String? session = await storage.read(key: "session");
+
+    try {
+      if (session != null) {
+        await widget.authenticationRepository.authWithSession(session);
+        widget.credentialRepository.password = password;
+      }
+    } catch (e) {
+      //
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

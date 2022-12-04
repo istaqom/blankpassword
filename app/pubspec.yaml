@@ -43,6 +43,8 @@ dependencies:
   bloc: ^8.1.0
   collection: ^1.16.0
 
+  flutter_secure_storage: ^6.1.0
+
   user_repository:
     path: packages/user_repository
   credential_repository:

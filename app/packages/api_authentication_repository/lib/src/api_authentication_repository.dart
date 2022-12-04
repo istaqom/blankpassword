@@ -24,10 +24,15 @@ class ApiAuthenticationInterceptor implements InterceptorContract {
 }
 
 class ApiAuthenticationRepository extends AuthenticationRepository {
-  final _controller = StreamController<AuthenticationStatus>();
+  final _controller = StreamController<AuthenticationStatus>.broadcast();
   final http.Client client;
   final String url;
   final ApiAuthenticationInterceptor interceptor;
+
+  final StreamController<String?> _passwordController =
+      StreamController.broadcast();
+  Stream<String?> get passwordStream => _passwordController.stream;
+
   ApiAuthenticationRepository({
     required this.client,
     required this.url,
@@ -54,7 +59,24 @@ class ApiAuthenticationRepository extends AuthenticationRepository {
         },
       );
 
-      return handleAuth(response);
+      return handleAuth(response, password);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<void> authWithSession(String session) async {
+    try {
+      var response = await client.get(
+        Uri.http(url, 'api/v1/auth/profile'),
+        headers: {
+          "Authorization": "Bearer $session",
+        },
+      );
+
+      handleResponse(response);
+      interceptor.session = session;
+      _controller.add(AuthenticationStatus.authenticated);
     } catch (e) {
       throw e;
     }
@@ -79,16 +101,20 @@ class ApiAuthenticationRepository extends AuthenticationRepository {
         },
       );
 
-      return handleAuth(response);
+      return handleAuth(response, password);
     } catch (e) {
       throw e;
     }
   }
 
-  void handleAuth(http.Response response) {
+  void handleAuth(
+    http.Response response,
+    String password,
+  ) {
     var body = handleResponse(response);
 
     interceptor.session = body['data']['session'];
+    _passwordController.add(password);
     _controller.add(AuthenticationStatus.authenticated);
   }
 
@@ -107,6 +133,7 @@ class ApiAuthenticationRepository extends AuthenticationRepository {
   @override
   Future<void> logOut() async {
     _controller.add(AuthenticationStatus.unauthenticated);
+    _passwordController.add(null);
   }
 
   @override
