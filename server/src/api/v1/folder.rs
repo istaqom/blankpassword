@@ -13,7 +13,7 @@ use crate::{
     user::UserUuid,
 };
 
-use super::{JsonFlattenSuccess, JsonSuccess};
+use super::JsonSuccess;
 
 #[derive(Serialize)]
 pub struct IndexResponse {
@@ -29,7 +29,7 @@ pub struct Folder {
 pub async fn index(
     Extension(db): Extension<DatabaseConnection>,
     UserUuid(user_id): UserUuid,
-) -> Result<JsonFlattenSuccess<IndexResponse>, Error> {
+) -> Result<JsonSuccess<IndexResponse>, Error> {
     let folders = folder::Entity::find()
         .filter(folder::Column::UserId.eq(user_id))
         .all(&db)
@@ -40,7 +40,7 @@ pub async fn index(
             name: it.name,
         })
         .collect();
-    Ok(JsonFlattenSuccess(IndexResponse { folders }))
+    Ok(JsonSuccess(IndexResponse { folders }))
 }
 
 pub async fn check_own(db: &DatabaseConnection, user_id: Uuid, id: Uuid) -> Result<(), Error> {
@@ -180,13 +180,9 @@ mod tests {
         .await
         .expect_err("different user");
 
-        super::delete(
-            other_user.db(),
-            other_user.uuid(),
-            Path(store_response.id),
-        )
-        .await
-        .expect_err("different user");
+        super::delete(other_user.db(), other_user.uuid(), Path(store_response.id))
+            .await
+            .expect_err("different user");
 
         let response = get_data().await.unwrap();
         assert_eq!(response.folders.len(), 1);
