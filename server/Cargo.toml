@@ -25,16 +25,19 @@ dotenvy = "0.15"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 tower-http = { version = '0.3.4', features = ['trace'] }
+migration = { version = "0.1", path = "./migration" }
 [dependencies.sea-orm]
 version = "0.10.0"
 features = [
     "runtime-tokio-native-tls",
+    "sqlx-postgres",
+    "sqlx-sqlite",
+    "sqlx-mysql",
 ]
 
 [dev-dependencies]
-migration = { version = "0.1", path = "./migration" }
 
-[features]
-sqlx-postgres = ["sea-orm/sqlx-postgres"]
-sqlx-sqlite = ["sea-orm/sqlx-sqlite"]
-sqlx-mysql = ["sea-orm/sqlx-mysql"]
+# [features]
+# sqlx-postgres = ["sea-orm/sqlx-postgres"]
+# sqlx-sqlite = ["sea-orm/sqlx-sqlite"]
+# sqlx-mysql = ["sea-orm/sqlx-mysql"]

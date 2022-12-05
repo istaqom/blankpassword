@@ -1,6 +1,7 @@
 use std::net::SocketAddr;
 
 use axum::{handler::Handler, http::Uri, Extension, Router};
+use migration::MigratorTrait;
 use sea_orm::{ConnectOptions, Database};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
@@ -29,6 +30,8 @@ async fn main() {
         .await
         .expect("cannot connect to database");
 
+    migration::Migrator::up(&db, None).await.unwrap();
+
     let apiv1 = Router::new()
         .nest(
             "/auth",
@@ -44,9 +47,18 @@ async fn main() {
         .nest(
             "/credential",
             Router::new()
-                .route("/", axum::routing::post(api::v1::credential::store))
                 .route("/", axum::routing::get(api::v1::credential::index))
+                .route("/", axum::routing::post(api::v1::credential::store))
+                .route("/:id", axum::routing::put(api::v1::credential::update))
                 .route("/:id", axum::routing::delete(api::v1::credential::delete)),
+        )
+        .nest(
+            "/folder",
+            Router::new()
+                .route("/", axum::routing::get(api::v1::folder::index))
+                .route("/", axum::routing::post(api::v1::folder::store))
+                .route("/:id", axum::routing::put(api::v1::folder::update))
+                .route("/:id", axum::routing::delete(api::v1::folder::delete)),
         );
 
     let app = Router::new()

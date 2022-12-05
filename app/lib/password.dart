@@ -1,16 +1,52 @@
 import 'package:authentication_repository/authentication_repository.dart';
-import 'package:blankpassword/auth.dart';
+import 'package:blankpassword/create_folder.dart';
+import 'package:blankpassword/credential/blocs/credential_bloc.dart';
+import 'package:blankpassword/credential/blocs/credentials_bloc.dart';
+import 'package:blankpassword/credential/blocs/credential_form_bloc.dart';
+import 'package:blankpassword/credential/blocs/credentials_folder_bloc.dart';
+import 'package:blankpassword/credential/model/model.dart';
+import 'package:blankpassword/credential/view/credential_widget.dart';
+import 'package:blankpassword/credential/view/credential_list.dart';
+import 'package:blankpassword/folder_list.dart';
 import 'package:blankpassword/settings.dart';
+import 'package:credential_repository/credential_repository.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'app.dart';
-import 'create_credential.dart';
-import 'credential.dart';
 
 class YourPasswordHomePageWidget extends StatefulWidget {
-  const YourPasswordHomePageWidget({super.key, required this.authenticationRepository});
+  const YourPasswordHomePageWidget({
+    super.key,
+    required this.authenticationRepository,
+    required this.credentialRepository,
+    required this.bloc,
+  });
+
+  static Route<void> route({
+    required CredentialsBloc bloc,
+    required AuthenticationRepository authenticationRepository,
+    required CredentialRepository credentialRepository,
+  }) {
+    return MaterialPageRoute(
+      builder: (context) => BlocBuilder<CredentialsBloc, CredentialsState>(
+        bloc: bloc,
+        builder: (context, state) {
+          return YourPasswordHomePageWidget(
+            authenticationRepository: authenticationRepository,
+            credentialRepository: credentialRepository,
+            bloc: bloc,
+          );
+        },
+      ),
+    );
+  }
 
   final AuthenticationRepository authenticationRepository;
+  final CredentialsBloc bloc;
+  final CredentialRepository credentialRepository;
+
   @override
   State<YourPasswordHomePageWidget> createState() =>
       _YourPasswordHomePageWidgetState();
@@ -18,6 +54,12 @@ class YourPasswordHomePageWidget extends StatefulWidget {
 
 class _YourPasswordHomePageWidgetState
     extends State<YourPasswordHomePageWidget> {
+  @override
+  void initState() {
+    widget.bloc.reload();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,7 +72,9 @@ class _YourPasswordHomePageWidgetState
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>  AccountSettings(authenticationRepository: widget.authenticationRepository,),
+                  builder: (context) => AccountSettings(
+                    authenticationRepository: widget.authenticationRepository,
+                  ),
                 ),
               );
             },
@@ -48,11 +92,17 @@ class _YourPasswordHomePageWidgetState
       ),
       body: AppContainerWithFloatingButton(
         floatingActionButton: FloatingActionButton(
-          onPressed: () {
+          onPressed: () async {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => const CreateCredentialWidget(),
+              CredentialFormWidget.route(
+                bloc: CredentialFormBloc(
+                  credentialsbloc: widget.bloc,
+                  credentialRepository: CredentialCreateRepository(
+                    widget.bloc,
+                  ),
+                ),
+                title: const Text("Add Login Info"),
               ),
             );
           },
@@ -64,10 +114,22 @@ class _YourPasswordHomePageWidgetState
             children: <Widget>[
               OutlinedButton(
                 style: OutlinedButton.styleFrom(
-                    side: const BorderSide(
-                  color: Colors.transparent,
-                )),
-                onPressed: () {},
+                  side: const BorderSide(
+                    color: Colors.transparent,
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return CreateFolderWidget(
+                          bloc: widget.bloc,
+                        );
+                      },
+                    ),
+                  );
+                },
                 child: Row(
                   children: [
                     Icon(
@@ -75,12 +137,15 @@ class _YourPasswordHomePageWidgetState
                       size: 50,
                       color: Theme.of(context).primaryColor,
                     ),
-                    const Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Text(
-                        "Create New Folder",
-                        style: TextStyle(
-                          color: Colors.white,
+                    const Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 10),
+                        child: Text(
+                          "Create New Folder",
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     )
@@ -90,35 +155,26 @@ class _YourPasswordHomePageWidgetState
               const Padding(padding: EdgeInsets.all(2)),
               const Divider(height: 2, thickness: 2),
               const Padding(padding: EdgeInsets.all(2)),
-              OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                    side: const BorderSide(
-                  color: Colors.transparent,
-                )),
-                onPressed: () {
+              const Padding(padding: EdgeInsets.all(2)),
+              FolderListWidget(
+                folders: widget.bloc.state.folders,
+                onFolderPressed: (item) {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const YourPasswordFolderWidget(),
+                      builder: (context) {
+                        return YourPasswordFolderWidget(
+                          bloc: CredentialsFolderBloc(
+                            folder: item,
+                            credentialsBloc: widget.bloc,
+                          ),
+                          credentialRepository: widget.credentialRepository,
+                        );
+                      },
                     ),
                   );
                 },
-                child: Row(children: [
-                  Icon(
-                    Icons.folder,
-                    size: 50,
-                    color: Theme.of(context).primaryColor,
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(left: 10.0),
-                    child: Text(
-                      "Sosmed",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ]),
-              ),
-              const Padding(padding: EdgeInsets.all(2)),
+              )
             ],
           ),
         ),
@@ -128,7 +184,14 @@ class _YourPasswordHomePageWidgetState
 }
 
 class YourPasswordFolderWidget extends StatefulWidget {
-  const YourPasswordFolderWidget({super.key});
+  const YourPasswordFolderWidget({
+    super.key,
+    required this.bloc,
+    required this.credentialRepository,
+  });
+
+  final CredentialsFolderBloc bloc;
+  final CredentialRepository credentialRepository;
 
   @override
   State<YourPasswordFolderWidget> createState() =>
@@ -148,8 +211,19 @@ class _YourPasswordFolderWidgetState extends State<YourPasswordFolderWidget> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => const CreateCredentialWidget(),
+              CredentialFormWidget.route(
+                bloc: CredentialFormBloc(
+                  state: CredentialFormState(
+                    folders: [
+                      FolderInput(folder: widget.bloc.state.folder),
+                    ],
+                  ),
+                  credentialsbloc: widget.bloc.credentialsBloc,
+                  credentialRepository: CredentialCreateRepository(
+                    widget.bloc.credentialsBloc,
+                  ),
+                ),
+                title: const Text("Add Login Info"),
               ),
             );
           },
@@ -157,82 +231,75 @@ class _YourPasswordFolderWidgetState extends State<YourPasswordFolderWidget> {
         ),
         child: Padding(
           padding: const EdgeInsets.all(20.0),
-          child: ListView(
-            children: <Widget>[
-              OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                    side: const BorderSide(
-                  color: Colors.transparent,
-                )),
-                onPressed: () {},
-                child: Row(
-                  children: const [
-                    Icon(
-                      Icons.folder,
-                      size: 50,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 10.0),
-                      child: Text(
-                        "Sosmed",
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
+          child: RefreshIndicator(
+            onRefresh: () async {
+              widget.bloc.reload();
+            },
+            child: ScrollConfiguration(
+              behavior: ScrollConfiguration.of(context).copyWith(
+                dragDevices: {
+                  PointerDeviceKind.touch,
+                  PointerDeviceKind.mouse,
+                },
+              ),
+              child: ListView(
+                children: <Widget>[
+                  OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(
+                        color: Colors.transparent,
                       ),
                     ),
-                  ],
-                ),
-              ),
-              const Padding(padding: EdgeInsets.all(2)),
-              const Divider(height: 2, thickness: 2),
-              const Padding(padding: EdgeInsets.all(2)),
-              for (var _ in List<int>.generate(20, (i) => i))
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                        side: const BorderSide(
-                      color: Colors.transparent,
-                    )),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const CredentialWidget(),
-                        ),
-                      );
-                    },
+                    onPressed: () {},
                     child: Row(
-                      children: [
-                        const Icon(
-                          Icons.facebook,
-                          color: Color(0xff472D2D),
+                      children: const [
+                        Icon(
+                          Icons.folder,
                           size: 50,
                         ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            Text(
-                              "Facebook",
-                              overflow: TextOverflow.ellipsis,
+                        Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 10.0),
+                            child: Text(
+                              "Sosmed",
                               style: TextStyle(
-                                color: Color(0xff472D2D),
-                                fontSize: 20,
+                                color: Colors.white,
                               ),
                             ),
-                            Text(
-                              "qonitaarif5@gmail.com",
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ],
+                          ),
                         ),
                       ],
                     ),
                   ),
-                )
-            ],
+                  const Padding(padding: EdgeInsets.all(2)),
+                  const Divider(height: 2, thickness: 2),
+                  const Padding(padding: EdgeInsets.all(2)),
+                  BlocBuilder<CredentialsBloc, CredentialsState>(
+                    bloc: widget.bloc.credentialsBloc,
+                    builder: (context, state) {
+                      return CredentialListWidget(
+                        credentials: widget.bloc.state.credentials,
+                        onCredentialPressed: (item) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return CredentialWidget(
+                                  bloc: CredentialBloc(
+                                    credentialBloc: widget.bloc.credentialsBloc,
+                                    credential: item,
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
