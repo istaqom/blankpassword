@@ -1,4 +1,6 @@
 import 'package:equatable/equatable.dart';
+import 'package:user_repository/src/models/models.dart';
+import './folder.dart';
 
 class Credential extends Equatable {
   const Credential({
@@ -7,6 +9,7 @@ class Credential extends Equatable {
     this.username = '',
     this.password = '',
     this.sites = const [''],
+    this.folders = const [],
     this.notes = '',
   });
 
@@ -15,10 +18,19 @@ class Credential extends Equatable {
   final String username;
   final String password;
   final List<String> sites;
+  final List<Folder> folders;
   final String notes;
 
   @override
-  List<Object> get props => [id, name, username, password, sites, notes];
+  List<Object> get props => [
+        id,
+        name,
+        username,
+        password,
+        sites,
+        notes,
+        folders,
+      ];
 
   Credential copyWith({
     String? id,
@@ -26,6 +38,7 @@ class Credential extends Equatable {
     String? username,
     String? password,
     List<String>? sites,
+    List<Folder>? folders,
     String? notes,
   }) {
     return Credential(
@@ -35,6 +48,7 @@ class Credential extends Equatable {
       password: password ?? this.password,
       sites: sites ?? this.sites,
       notes: notes ?? this.notes,
+      folders: folders ?? this.folders,
     );
   }
 }

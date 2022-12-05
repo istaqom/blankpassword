@@ -38,3 +38,9 @@ class CredentialsStatusChanged extends CredentialsEvent {
 
   final CredentialsStatus status;
 }
+
+class FolderCreated extends CredentialsEvent {
+  FolderCreated(this.folder);
+  final Folder folder;
+}
+

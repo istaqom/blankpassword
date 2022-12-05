@@ -43,6 +43,7 @@ Future<String> credentialToJson(String? password, Credential credential) async {
 
   return jsonEncode({
     "name": credential.name,
+    "folders": credential.folders.map((it) => {"id": it.id}).toList(growable: false),
     "data": {
       'salt': salt,
       "encrypted": d.base64,
@@ -53,19 +54,29 @@ Future<String> credentialToJson(String? password, Credential credential) async {
 }
 
 Credential credentialFromEncrypted({
-  String? id,
-  required String name,
-  required dynamic data,
+  required dynamic json,
+  // String? id,
+  // required String name,
+  required dynamic encrypted,
 }) {
-  List<dynamic> sites = data['sites'];
+  List<dynamic> sites = encrypted['sites'];
+  List<dynamic> folders = json['folders'];
 
   return Credential(
-    id: id ?? '',
-    name: name,
-    username: data['username'],
-    password: data['password'],
-    notes: data['notes'],
+    id: json['id'] ?? '',
+    name: json['name'],
+    username: encrypted['username'],
+    password: encrypted['password'],
+    notes: encrypted['notes'],
     sites: sites.map((it) => it['url'] as String).toList(),
+    folders: folders
+        .map(
+          (it) => Folder(
+            id: it['id'],
+            name: it['name'],
+          ),
+        )
+        .toList(),
   );
 }
 
@@ -85,17 +96,17 @@ Future<Credential> credentialFromJson(
   var data = jsonDecode(dataString);
 
   return credentialFromEncrypted(
-    id: json['id'],
-    name: json['name'],
-    data: data,
+    json: json,
+    encrypted: data,
   );
 }
 
 class ApiCredentialRepository extends CredentialRepository {
-  final _controller = StreamController<CredentialsStatus>();
+  final _controller = StreamController<CredentialsStatus>.broadcast();
   final http.Client client;
   final String url;
   final List<Credential> credentials = [];
+  final List<Folder> folders = [];
 
   String? password = null;
 
@@ -121,6 +132,15 @@ class ApiCredentialRepository extends CredentialRepository {
     return this.credentials.toList();
   }
 
+  @override
+  Future<List<Folder>> getFolders() async {
+    if (this.folders.isEmpty) {
+      await reload();
+    }
+
+    return this.folders.toList();
+  }
+
   int? _getIndex(Credential credential) {
     for (var index = 0; index < this.credentials.length; ++index) {
       if (this.credentials[index].id == credential.id) {
@@ -131,21 +151,47 @@ class ApiCredentialRepository extends CredentialRepository {
   }
 
   @override
-  Future<Credential> create(Credential credential) async {
+  Future<Folder> createFolder(Folder folder) async {
     var response = await client.post(
-      Uri.http(url, 'api/v1/credential'),
-      body: await credentialToJson(password, credential),
+      Uri.http(url, 'api/v1/folder'),
+      body: jsonEncode({
+        "name": folder.name,
+      }),
       headers: {
         "Content-Type": "application/json",
       },
     );
 
     var json = handleResponse(response);
+    folders.add(folder.copyWith(id: json['id']));
+    return folder;
+  }
 
-    var c = credential.copyWith(id: json['data']['id']);
-    this.credentials.add(c);
+  @override
+  Future<Credential> create(Credential credential) async {
+    print("Create");
 
-    return c;
+    try {
+      var response = await client.post(
+        Uri.http(url, 'api/v1/credential'),
+        body: await credentialToJson(password, credential),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      );
+
+      print(response.body);
+
+      var json = handleResponse(response);
+
+      var c = credential.copyWith(id: json['data']['id']);
+      this.credentials.add(c);
+
+      return c;
+    } catch (e) {
+      print(e);
+    throw e;
+    }
   }
 
   @override
@@ -175,6 +221,12 @@ class ApiCredentialRepository extends CredentialRepository {
 
   @override
   Future<void> reload() async {
+    print("reloading");
+    await reloadCredential();
+    await reloadFolder();
+  }
+
+  Future<void> reloadCredential() async {
     var response = await client.get(Uri.http(url, 'api/v1/credential'));
 
     var json = handleResponse(response);
@@ -185,6 +237,24 @@ class ApiCredentialRepository extends CredentialRepository {
           await Future.wait(credentials.map(
             (it) => credentialFromJson(password, it),
           )),
+        );
+  }
+
+  Future<void> reloadFolder() async {
+    var response = await client.get(Uri.http(url, 'api/v1/folder'));
+
+    var json = handleResponse(response);
+
+    List<dynamic> folders = json['data']['folders'];
+
+    this.folders.clear();
+    this.folders.addAll(
+          folders.map(
+            (it) => Folder(
+              id: it['id'],
+              name: it['name'],
+            ),
+          ),
         );
   }
 

@@ -57,3 +57,9 @@ class CredentialFormSiteUrlChanged extends CredentialFormSiteEvent {
 
   final String value;
 }
+
+class CredentialFormFolderChanged extends CredentialFormEvent {
+  CredentialFormFolderChanged(this.folders);
+
+  final List<Folder> folders;
+}

@@ -138,6 +138,7 @@ class CredentialWidget extends StatelessWidget {
                         credentialRepository: CredentialUpdateRepository(
                           bloc,
                         ),
+                        credentialsbloc: bloc.credentialBloc,
                         state: CredentialFormState.fromCredential(
                           bloc.state.credential,
                         ),
@@ -158,6 +159,7 @@ class CredentialWidget extends StatelessWidget {
                     readOnly: true,
                     bloc: CredentialFormBloc(
                       credentialRepository: CredentialFormRepository(),
+                      credentialsbloc: bloc.credentialBloc,
                       state: CredentialFormState.fromCredential(
                         credential,
                       ),

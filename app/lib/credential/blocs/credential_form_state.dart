@@ -7,6 +7,7 @@ class CredentialFormState extends Equatable {
     this.password = const GenericInput.pure(),
     this.notes = const GenericInput.pure(),
     this.sites = const [SiteInput(id: 1)],
+    this.folders = const [],
     this.status = FormzStatus.pure,
     this.error,
   });
@@ -33,12 +34,13 @@ class CredentialFormState extends Equatable {
   final GenericInput password;
   final GenericInput notes;
   final List<SiteInput> sites;
+  final List<FolderInput> folders;
   final FormzStatus status;
   final String? error;
 
   @override
   String toString() {
-    return '''CredentialFormState { name: $name, username: $username, password: $password, notes: $notes }''';
+    return '''CredentialFormState { name: $name, username: $username, password: $password, notes: $notes, folders: $folders }''';
   }
 
   CredentialFormState copyWith({
@@ -47,6 +49,7 @@ class CredentialFormState extends Equatable {
     GenericInput? password,
     GenericInput? notes,
     List<SiteInput>? sites,
+    List<FolderInput>? folders,
     FormzStatus? status,
     String? error,
   }) {
@@ -56,6 +59,7 @@ class CredentialFormState extends Equatable {
       password: password ?? this.password,
       notes: notes ?? this.notes,
       sites: sites ?? this.sites,
+      folders: folders ?? this.folders,
       status: status ?? this.status,
       error: error,
     );
@@ -67,6 +71,13 @@ class CredentialFormState extends Equatable {
       username: username.value,
       password: password.value,
       notes: notes.value,
+      folders: folders
+          .map(
+            (it) => it.folder,
+          )
+          .toList(
+            growable: false,
+          ),
       sites: sites
           .map(
             (it) => it.url.value,

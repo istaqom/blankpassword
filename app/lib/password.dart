@@ -1,9 +1,13 @@
 import 'package:authentication_repository/authentication_repository.dart';
+import 'package:blankpassword/create_folder.dart';
 import 'package:blankpassword/credential/blocs/credential_bloc.dart';
 import 'package:blankpassword/credential/blocs/credentials_bloc.dart';
 import 'package:blankpassword/credential/blocs/credential_form_bloc.dart';
+import 'package:blankpassword/credential/blocs/credentials_folder_bloc.dart';
+import 'package:blankpassword/credential/model/model.dart';
 import 'package:blankpassword/credential/view/credential_widget.dart';
 import 'package:blankpassword/credential/view/credential_list.dart';
+import 'package:blankpassword/folder_list.dart';
 import 'package:blankpassword/settings.dart';
 import 'package:credential_repository/credential_repository.dart';
 import 'package:flutter/gestures.dart';
@@ -51,6 +55,12 @@ class YourPasswordHomePageWidget extends StatefulWidget {
 class _YourPasswordHomePageWidgetState
     extends State<YourPasswordHomePageWidget> {
   @override
+  void initState() {
+    widget.bloc.reload();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -87,6 +97,7 @@ class _YourPasswordHomePageWidgetState
               context,
               CredentialFormWidget.route(
                 bloc: CredentialFormBloc(
+                  credentialsbloc: widget.bloc,
                   credentialRepository: CredentialCreateRepository(
                     widget.bloc,
                   ),
@@ -107,7 +118,18 @@ class _YourPasswordHomePageWidgetState
                     color: Colors.transparent,
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return CreateFolderWidget(
+                          bloc: widget.bloc,
+                        );
+                      },
+                    ),
+                  );
+                },
                 child: Row(
                   children: [
                     Icon(
@@ -133,41 +155,26 @@ class _YourPasswordHomePageWidgetState
               const Padding(padding: EdgeInsets.all(2)),
               const Divider(height: 2, thickness: 2),
               const Padding(padding: EdgeInsets.all(2)),
-              OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                    side: const BorderSide(
-                  color: Colors.transparent,
-                )),
-                onPressed: () {
+              const Padding(padding: EdgeInsets.all(2)),
+              FolderListWidget(
+                folders: widget.bloc.state.folders,
+                onFolderPressed: (item) {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => YourPasswordFolderWidget(
-                        bloc: widget.bloc,
-                        credentialRepository: widget.credentialRepository,
-                      ),
+                      builder: (context) {
+                        return YourPasswordFolderWidget(
+                          bloc: CredentialsFolderBloc(
+                            folder: item,
+                            credentialsBloc: widget.bloc,
+                          ),
+                          credentialRepository: widget.credentialRepository,
+                        );
+                      },
                     ),
                   );
                 },
-                child: Row(children: [
-                  Icon(
-                    Icons.folder,
-                    size: 50,
-                    color: Theme.of(context).primaryColor,
-                  ),
-                  const Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 10.0),
-                      child: Text(
-                        "Sosmed",
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
-                ]),
-              ),
-              const Padding(padding: EdgeInsets.all(2)),
+              )
             ],
           ),
         ),
@@ -177,15 +184,13 @@ class _YourPasswordHomePageWidgetState
 }
 
 class YourPasswordFolderWidget extends StatefulWidget {
-  YourPasswordFolderWidget({
+  const YourPasswordFolderWidget({
     super.key,
     required this.bloc,
     required this.credentialRepository,
-  }) {
-    bloc.loadCredential();
-  }
+  });
 
-  final CredentialsBloc bloc;
+  final CredentialsFolderBloc bloc;
   final CredentialRepository credentialRepository;
 
   @override
@@ -208,8 +213,14 @@ class _YourPasswordFolderWidgetState extends State<YourPasswordFolderWidget> {
               context,
               CredentialFormWidget.route(
                 bloc: CredentialFormBloc(
+                  state: CredentialFormState(
+                    folders: [
+                      FolderInput(folder: widget.bloc.state.folder),
+                    ],
+                  ),
+                  credentialsbloc: widget.bloc.credentialsBloc,
                   credentialRepository: CredentialCreateRepository(
-                    widget.bloc,
+                    widget.bloc.credentialsBloc,
                   ),
                 ),
                 title: const Text("Add Login Info"),
@@ -264,10 +275,10 @@ class _YourPasswordFolderWidgetState extends State<YourPasswordFolderWidget> {
                   const Divider(height: 2, thickness: 2),
                   const Padding(padding: EdgeInsets.all(2)),
                   BlocBuilder<CredentialsBloc, CredentialsState>(
-                    bloc: widget.bloc,
+                    bloc: widget.bloc.credentialsBloc,
                     builder: (context, state) {
                       return CredentialListWidget(
-                        bloc: widget.bloc,
+                        credentials: widget.bloc.state.credentials,
                         onCredentialPressed: (item) {
                           Navigator.push(
                             context,
@@ -275,7 +286,7 @@ class _YourPasswordFolderWidgetState extends State<YourPasswordFolderWidget> {
                               builder: (context) {
                                 return CredentialWidget(
                                   bloc: CredentialBloc(
-                                    credentialBloc: widget.bloc,
+                                    credentialBloc: widget.bloc.credentialsBloc,
                                     credential: item,
                                   ),
                                 );

@@ -1,28 +1,28 @@
-part of 'credentials_bloc.dart';
+part of 'credentials_folder_bloc.dart';
 
-class CredentialsState extends Equatable {
-  const CredentialsState({
+class CredentialsFolderState extends Equatable {
+  const CredentialsFolderState({
+    required this.folder,
     this.status = CredentialsStatus.initial,
     this.credentials = const [],
-    this.folders = const [],
     this.error,
   });
 
   final CredentialsStatus status;
   final List<Credential> credentials;
-  final List<Folder> folders;
+  final Folder folder;
   final String? error;
 
-  CredentialsState copyWith({
+  CredentialsFolderState copyWith({
     CredentialsStatus? status,
     List<Credential>? credentials,
-    List<Folder>? folders,
+    Folder? folder,
     String? error,
   }) {
-    return CredentialsState(
+    return CredentialsFolderState(
       status: status ?? this.status,
       credentials: credentials ?? this.credentials,
-      folders: folders ?? this.folders,
+      folder: folder ?? this.folder,
       error: error,
     );
   }
@@ -38,9 +38,9 @@ class CredentialsState extends Equatable {
 
   @override
   String toString() {
-    return '''CredentialState { status: $status, credentials: ${credentials.length} }, folders: ${folders.length}''';
+    return '''CredentialState { status: $status, credentials: ${credentials.length} }''';
   }
 
   @override
-  List<Object> get props => [status, credentials, folders];
+  List<Object> get props => [status, credentials, folder];
 }

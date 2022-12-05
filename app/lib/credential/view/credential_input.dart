@@ -1,7 +1,12 @@
 import 'package:blankpassword/credential/model/sites.dart';
 import 'package:blankpassword/generate_password.dart';
 import 'package:blankpassword/widget/password_field.dart';
+import 'package:credential_repository/credential_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:multi_select_flutter/chip_display/multi_select_chip_display.dart';
+import 'package:multi_select_flutter/dialog/mult_select_dialog.dart';
+import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
+import 'package:multi_select_flutter/util/multi_select_item.dart';
 
 import '../blocs/credential_form_bloc.dart';
 import 'package:flutter/material.dart';
@@ -43,6 +48,7 @@ class _CredentialInputWidgetState extends State<CredentialInputWidget> {
         PasswordInput(shared),
         SitesInputWidget(shared),
         NoteInput(shared),
+        FoldersInput(shared),
       ],
     );
   }
@@ -331,6 +337,39 @@ class NoteInput extends StatelessWidget {
             ),
             minLines: 4,
             maxLines: null,
+          ),
+        );
+      },
+    );
+  }
+}
+
+class FoldersInput extends StatelessWidget {
+  const FoldersInput(this.shared, {super.key});
+  final Shared shared;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<CredentialFormBloc, CredentialFormState>(
+      bloc: shared.bloc,
+      buildWhen: (previous, current) => previous.folders != current.folders,
+      builder: (context, state) {
+        return Container(
+          height: 200,
+          child: MultiSelectDialogField<Folder>(
+            items: shared.bloc.credentialsbloc.state.folders.map((element) {
+              return MultiSelectItem(element, element.name);
+            }).toList(growable: false),
+            onConfirm: (list) {
+              shared.bloc.add(CredentialFormFolderChanged(list));
+            },
+            initialValue: shared.bloc.state.folders
+                .map(
+                  (it) => it.folder,
+                )
+                .toList(
+                  growable: false,
+                ),
           ),
         );
       },

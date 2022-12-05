@@ -1,6 +1,3 @@
-import 'package:blankpassword/credential/blocs/credential_bloc.dart';
-import 'package:blankpassword/credential/blocs/credentials_bloc.dart';
-import 'package:blankpassword/credential/view/credential_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:credential_repository/credential_repository.dart';
 import 'package:flutter/material.dart';
@@ -8,11 +5,11 @@ import 'package:flutter/material.dart';
 class CredentialListWidget extends StatelessWidget {
   const CredentialListWidget({
     super.key,
-    required this.bloc,
+    required this.credentials,
     required this.onCredentialPressed,
   });
 
-  final CredentialsBloc bloc;
+  final List<Credential> credentials;
   final void Function(Credential) onCredentialPressed;
 
   String getFavicon(Credential item) {
@@ -32,10 +29,9 @@ class CredentialListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("building");
     return Column(
       children: [
-        for (var item in bloc.state.credentials)
+        for (var item in credentials)
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: OutlinedButton(
@@ -45,7 +41,6 @@ class CredentialListWidget extends StatelessWidget {
                 ),
               ),
               onPressed: () {
-                print("credential presseed");
                 onCredentialPressed(item);
               },
               child: Row(

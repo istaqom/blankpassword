@@ -107,7 +107,7 @@ class _AutofillPasswordWidgetState extends State<AutofillPasswordWidget> {
                     bloc: widget.bloc,
                     builder: (context, state) {
                       return CredentialListWidget(
-                        bloc: widget.bloc,
+                        credentials: widget.bloc.state.credentials,
                         onCredentialPressed: (item) async {
                           var service = AutofillService();
 

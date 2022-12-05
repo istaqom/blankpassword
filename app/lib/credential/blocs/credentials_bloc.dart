@@ -17,6 +17,7 @@ class CredentialsBloc extends Bloc<CredentialsEvent, CredentialsState> {
     on<CredentialsCreated>(_onCredentialCreated);
     on<CredentialsUpdated>(_onCredentialUpdated);
     on<CredentialsDeleted>(_onCredentialDeleted);
+    on<FolderCreated>(_onFolderCreated);
 
     _credentialSubscribtion = _credentialRepository.status
         .listen((status) => add(CredentialsStatusChanged(status)));
@@ -29,14 +30,23 @@ class CredentialsBloc extends Bloc<CredentialsEvent, CredentialsState> {
     add(CredentialsFetched());
   }
 
+  Future<void> reload() async {
+    add(CredentialsFetched());
+    await stream.first;
+  }
+
   Future<void> _onCredentialFetched(
     CredentialsFetched event,
     Emitter<CredentialsState> emit,
   ) async {
     try {
       var credentials = await _credentialRepository.getCredentials();
+      var folders = await _credentialRepository.getFolders();
 
-      emit(state.copyWith(credentials: credentials));
+      emit(state.copyWith(
+        credentials: credentials,
+        folders: folders,
+      ));
     } catch (e) {
       emit(
         state.copyWith(
@@ -46,6 +56,12 @@ class CredentialsBloc extends Bloc<CredentialsEvent, CredentialsState> {
       );
       // TODO: report error
     }
+  }
+
+  Future<void> createFolder(Folder name) async {
+    var folder = await _credentialRepository.createFolder(name);
+
+    add(FolderCreated(folder));
   }
 
   Future<void> create(Credential credential) async {
@@ -64,11 +80,6 @@ class CredentialsBloc extends Bloc<CredentialsEvent, CredentialsState> {
     } catch (e) {}
   }
 
-  Future<void> reload() async {
-    add(CredentialsFetched());
-    await stream.first;
-  }
-
   Future<void> delete(Credential credential) async {
     try {
       await _credentialRepository.delete(credential);
@@ -79,6 +90,15 @@ class CredentialsBloc extends Bloc<CredentialsEvent, CredentialsState> {
 
   Future<Credential?> get(Credential credential) async {
     return await _credentialRepository.get(credential);
+  }
+
+  Future<void> _onFolderCreated(
+    FolderCreated event,
+    Emitter<CredentialsState> emit,
+  ) async {
+    var folders = await _credentialRepository.getFolders();
+
+    emit(state.copyWith(folders: folders));
   }
 
   Future<void> _onCredentialCreated(

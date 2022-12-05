@@ -29,7 +29,7 @@ void run({
     authenticationInterceptor,
   ]);
 
-  var url = "192.168.1.7:3000";
+  var url = "localhost:3000";
   var apiAuthenticationRepository = ApiAuthenticationRepository(
     client: httpClient,
     url: url,
@@ -133,11 +133,12 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _loadState() async {
-    var storage = const FlutterSecureStorage();
-    String? password = await storage.read(key: "password");
-    String? session = await storage.read(key: "session");
-
     try {
+      var storage = const FlutterSecureStorage();
+
+      String? password = await storage.read(key: "password");
+      String? session = await storage.read(key: "session");
+
       if (session != null) {
         await widget.authenticationRepository.authWithSession(session);
         widget.credentialRepository.password = password;

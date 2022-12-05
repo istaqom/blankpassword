@@ -55,6 +55,7 @@ class CredentialFormBloc
     extends Bloc<CredentialFormEvent, CredentialFormState> {
   CredentialFormBloc({
     required CredentialFormRepository credentialRepository,
+    required this.credentialsbloc,
     CredentialFormState state = const CredentialFormState(),
   })  : _credentialRepository = credentialRepository,
         super(state) {
@@ -66,10 +67,12 @@ class CredentialFormBloc
     on<CredentialFormUsernameChanged>(_onUsernameChanged);
     on<CredentialFormPasswordChanged>(_onPasswordChanged);
     on<CredentialFormNotesChanged>(_onNotesChanged);
+    on<CredentialFormFolderChanged>(_onFolderChanged);
 
     on<CredentialFormSiteUrlChanged>(_onSiteUrlChanged);
   }
 
+  final CredentialsBloc credentialsbloc;
   final CredentialFormRepository _credentialRepository;
 
   void removeSite(int index) {
@@ -203,6 +206,19 @@ class CredentialFormBloc
             url: GenericInput.dirty(event.value),
           ),
         status: FormzStatus.valid,
+      ),
+    );
+  }
+
+  void _onFolderChanged(
+    CredentialFormFolderChanged event,
+    Emitter<CredentialFormState> emit,
+  ) {
+    emit(
+      state.copyWith(
+        folders: event.folders
+            .map((it) => FolderInput(folder: it))
+            .toList(growable: false),
       ),
     );
   }
